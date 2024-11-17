@@ -1,0 +1,725 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.split-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  position: relative;
+}
+
+.split {
+  position: relative;
+  width: 50%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.left {
+  background-image: url('../img/h2.jpg');
+}
+
+.right {
+  background-image: url('../img/h1.jpg');
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: black;
+  padding: 15px 20px;
+}
+
+.navbar .logo {
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.navbar .nav-links {
+  list-style: none;
+  display: flex;
+}
+
+.navbar .nav-links li {
+  margin-left: 20px;
+}
+
+.navbar .nav-links li a {
+  text-decoration: none;
+  color: white;
+  font-size: 18px;
+  transition: color 0.3s;
+}
+
+.navbar .nav-links li a:hover {
+  color: #f4a261;
+}
+
+.home {
+  height: 100vh;
+  width: 100%;
+  background-image: url('../img/h1.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+/* Remove the overlay since there's no text to protect */
+.home::before {
+  display: none;
+}
+
+.home-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: white;
+  padding: 20px;
+  max-width: 800px;
+}
+
+.home-content h1 {
+    color: silver;
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.home p {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cta-button {
+  padding: 10px 30px;
+  background-color: silver;
+  color: black;
+  font-size: 1.1rem;
+  text-decoration: none;
+  border-radius: 10px;
+  transition: background-color 0.3s;
+}
+
+.cta-button:hover {
+  background-color: white;
+}
+
+/* Services Section */
+.services {  
+  padding: 5rem 0;
+  background-color: #fff5f5;
+}
+.container{
+    max-width: 1200px;
+    width: 95%;
+    margin: 0 auto;
+
+
+}
+.service-box{
+    height: 300px;
+    background: #e6e6fa;  /* Light purple (Lavender) */
+}
+.s1{
+    margin-bottom: 3rem;
+}
+.s2{
+    margin-bottom: 3rem;
+}
+.s1 .picture, .s2 .text, .s3 .picture{
+    float: left;
+    width: 50%;
+}
+.s1 .text, .s2 .picture, .s3 .text{
+    float: right;
+    width: 50%;
+}
+.service-box .picture{
+    height: 100%;
+}
+.service-box .text{
+    padding: 30px;
+    text-align: center;
+}
+.service-box .picture img{
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.btn-second{
+    display: inline-block;
+    padding: 0.5em 1.5em;
+    font-weight: 500;
+    text-transform: uppercase;
+    margin: 0.5em 0;
+    border: 2px solid #e63946;
+    border-radius: 2em;
+    color: #e63946;
+    background:#fff ;
+}
+.btn-second:hover{
+    background-color: silver;
+}
+footer {
+  background-color: black;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+.footer-content p {
+  margin-bottom: 10px;
+}
+
+.social-links {
+  margin-top: 10px;
+}
+
+.social-icon {
+  text-decoration: none;
+  color: white;
+  margin: 0 10px;
+  font-size: 18px;
+}
+
+.social-icon:hover {
+  color: white;
+}
+
+.about-us {
+    padding: 60px 0;
+    background-color: #fff5f5;
+}
+
+.about-us .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.about-us h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.about-intro {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 50px;
+    line-height: 1.6;
+}
+
+.team-section {
+    margin: 40px 0;
+}
+
+.team-section h2 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.team-members {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.team-member {
+    background: #e6e6fa;  /* Light purple (Lavender) */
+    padding: 30px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.team-member h3 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.our-mission {
+    margin-top: 50px;
+    text-align: center;
+}
+
+.our-mission h2 {
+    margin-bottom: 20px;
+}
+
+.our-mission p {
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.navbar .logo a {
+    text-decoration: none;
+    color: white;
+}
+
+.navbar .logo a:hover {
+    color: #f4a261;
+}
+
+.member-image {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background-color: #ddd;  /* Placeholder color */
+    margin: 0 auto 20px;
+}
+
+.team-member {
+    text-align: center;
+    padding: 30px 20px;
+}
+
+/* Contact Page Styles */
+.contact-section {
+    padding: 60px 0;
+    background-color: #fff5f5;
+}
+
+.contact-section h1 {
+    text-align: center;
+    margin-bottom: 40px;
+    color: #333;
+}
+
+.contact-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.contact-info {
+    background: #e6e6fa;  /* Light purple (Lavender) */
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.contact-info h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.info-item {
+    margin-bottom: 20px;
+}
+
+.info-item h3 {
+    color: #666;
+    margin-bottom: 5px;
+    font-size: 1.1rem;
+}
+
+.contact-form {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+}
+
+/* Update Contact Page Styles */
+.contact-info-centered {
+    background: #e6e6fa;  /* Light purple (Lavender) */
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.contact-info-centered h2 {
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.info-item {
+    margin-bottom: 25px;
+}
+
+.info-item h3 {
+    color: #666;
+    margin-bottom: 8px;
+    font-size: 1.2rem;
+}
+
+.info-item p {
+    color: #333;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+/*payment*/
+.payment{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 75vh;
+    background-color: #fff5f5;
+}
+.payment-container { 
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 600px;
+    max-width: 100%;
+    text-align: center;
+}
+
+.payment-container h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.payment-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.input-group label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+}
+
+.input-group input:focus {
+    border-color: #4CAF50;
+}
+
+.submit-btn {
+    padding: 12px 20px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+    background-color: #45a049;
+}
+
+.submit-btn:active {
+    background-color: #388e3c;
+}
+
+.centered-text {
+  position: absolute;
+  top: 10%;
+  left: 45%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 3.5rem;
+  white-space: nowrap;
+}
+
+.text-left, .text-right {
+  position: absolute;
+  top: 10%;
+  color: black;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 3.5rem;
+}
+
+.text-left {
+  right: 5%;  /* Position from right edge of left container */
+}
+
+.text-right {
+  left: 5%;   /* Position from left edge of right container */
+}
+
+.split.left {
+  text-decoration: none;
+  cursor: pointer;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.split.left:hover {
+  transform: scale(1.02);
+}
+
+.login-text {
+  position: absolute;
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: black;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.2rem;
+  text-align: center;
+  font-weight: 500;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 10px 20px;
+  border-radius: 5px;
+}
+
+.split.right {
+  text-decoration: none;
+  cursor: pointer;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.split.right:hover {
+  transform: scale(1.02);
+}
+
+.register-text {
+  position: absolute;
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: black;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.2rem;
+  text-align: center;
+  font-weight: 500;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 10px 20px;
+  border-radius: 5px;
+}
+
+.register-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background-color: #fff5f5;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.register-form {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    margin-top: 20px;
+}
+
+.register-form h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+    font-size: 14px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+.register-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.register-btn:hover {
+    background-color: #45a049;
+}
+
+.login-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+    color: #666;
+}
+
+.login-link a {
+    color: #4CAF50;
+    text-decoration: none;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
+
+.error-message {
+    color: #ff0000;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}
+
+.form-group input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input[type="password"]:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+.password-requirements {
+    color: #666;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}
+
+.password-requirements ul {
+    margin-left: 20px;
+    margin-top: 5px;
+}
+
+.password-requirements li {
+    margin-bottom: 2px;
+}
+
+.login-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff5f5;
+}
+
+.login-form {
+    background-color: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-form h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 24px;
+}
+
+.role-select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: white;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.role-select:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+}
+
+.login-btn:hover {
+    background-color: #45a049;
+}
+
+.register-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+    color: #666;
+}
+
+.register-link a {
+    color: #4CAF50;
+    text-decoration: none;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}
