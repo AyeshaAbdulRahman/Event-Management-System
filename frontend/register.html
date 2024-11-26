@@ -6,117 +6,53 @@
     <title>Register - MehfilHub</title>
     <link rel="stylesheet" href="./css/styles.css">
 </head>
-<body>
+<body style="background-color: #3b306c;">
+    <header>
+        <nav class="navbar">
+            <div class="logo"><a href="fakehome.html">MehfilHub</a></div>
+            <ul class="nav-links">
+                <li><a href="services.html">Services</a></li>
+                <li><a href="vendor.html">Vendors</a></li>
+                <li><a href="aboutus.html">About Us</a></li>
+                <li><a href="contactus.html">Contact Us</a></li>
+                <li><a href="feedback.html">Feedback</a></li>
+            </ul>
+        </nav>
+    </header>
+
     <div class="register-container">
-        <form class="register-form" onsubmit="return validateForm(event)">
-            <h2>Create Your Account</h2>
-            
+        <form class="register-form">
+            <h2 style="color: #3b306c;">Register</h2>
             <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
+                <label for="name">Full Name</label>
+                <input type="text" id="name" required>
             </div>
-
-            <div class="form-group">
-                <label for="firstName">First Name</label>
-                <input type="text" id="firstName" name="firstName" required>
-            </div>
-
-            <div class="form-group">
-                <label for="lastName">Last Name</label>
-                <input type="text" id="lastName" name="lastName" required>
-            </div>
-
-            <div class="form-group">
-                <label for="phone">Phone Number</label>
-                <input type="tel" id="phone" name="phone" required>
-            </div>
-
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
+                <input type="email" id="email" required>
             </div>
-
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
-                <span class="password-requirements">
-                    Password must contain at least 8 characters, including:
+                <input type="password" id="password" required>
+                <div class="password-requirements">
+                    <p>Password must contain:</p>
                     <ul>
+                        <li>At least 8 characters</li>
                         <li>One uppercase letter</li>
                         <li>One number</li>
                         <li>One special character</li>
                     </ul>
-                </span>
+                </div>
             </div>
-
             <div class="form-group">
-                <label for="confirmPassword">Confirm Password</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" required>
-                <span id="passwordError" class="error-message"></span>
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" required>
             </div>
-
             <button type="submit" class="register-btn">Register</button>
-            
             <div class="login-link">
-                Already have an account? <a href="login.html">Login here</a>
+                <p>Already have an account? <a href="login.html">Login</a></p>
             </div>
         </form>
     </div>
-
-    <script>
-        function validatePassword(password) {
-            // Check minimum length
-            if (password.length < 8) {
-                return "Password must be at least 8 characters long";
-            }
-            
-            // Check for uppercase letter
-            if (!/[A-Z]/.test(password)) {
-                return "Password must contain at least one uppercase letter";
-            }
-            
-            // Check for number
-            if (!/[0-9]/.test(password)) {
-                return "Password must contain at least one number";
-            }
-            
-            // Check for special character
-            if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-                return "Password must contain at least one special character";
-            }
-            
-            return ""; // Return empty string if all validations pass
-        }
-
-        function validateForm(event) {
-            event.preventDefault();
-            
-            const password = document.getElementById('password');
-            const confirmPassword = document.getElementById('confirmPassword');
-            const errorElement = document.getElementById('passwordError');
-            
-            // First validate password requirements
-            const passwordError = validatePassword(password.value);
-            if (passwordError) {
-                errorElement.textContent = passwordError;
-                password.value = '';
-                confirmPassword.value = '';
-                password.focus();
-                return false;
-            }
-            
-            // Then check if passwords match
-            if (password.value !== confirmPassword.value) {
-                errorElement.textContent = 'Passwords do not match';
-                password.value = '';
-                confirmPassword.value = '';
-                password.focus();
-                return false;
-            }
-            
-            errorElement.textContent = '';
-            return true;
-        }
-    </script>
 </body>
 </html> 

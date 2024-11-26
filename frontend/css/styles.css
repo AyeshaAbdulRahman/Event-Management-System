@@ -37,17 +37,23 @@ body {
 }
 
 .navbar {
+  background-color: white;
+  padding: 15px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: black;
-  padding: 15px 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .navbar .logo {
-  color: white;
-  font-size: 24px;
-  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+
+.logo-image {
+  height: 40px;  /* Adjust this value based on your logo size */
+  width: auto;
+  object-fit: contain;
 }
 
 .navbar .nav-links {
@@ -61,13 +67,13 @@ body {
 
 .navbar .nav-links li a {
   text-decoration: none;
-  color: white;
+  color: #3b306c;
   font-size: 18px;
   transition: color 0.3s;
 }
 
 .navbar .nav-links li a:hover {
-  color: #f4a261;
+  color: #13b874;
 }
 
 .home {
@@ -112,8 +118,8 @@ body {
 
 .cta-button {
   padding: 10px 30px;
-  background-color: silver;
-  color: black;
+  background-color: #13b874;
+  color: white;
   font-size: 1.1rem;
   text-decoration: none;
   border-radius: 10px;
@@ -121,7 +127,7 @@ body {
 }
 
 .cta-button:hover {
-  background-color: white;
+  background-color: #0f9660;
 }
 
 /* Services Section */
@@ -173,13 +179,14 @@ body {
     font-weight: 500;
     text-transform: uppercase;
     margin: 0.5em 0;
-    border: 2px solid #e63946;
+    border: 2px solid #87819d;
     border-radius: 2em;
-    color: #e63946;
+    color: #87819d;
     background:#fff ;
 }
 .btn-second:hover{
-    background-color: silver;
+    background-color: #87819d;
+    color: white;
 }
 footer {
   background-color: black;
@@ -237,7 +244,7 @@ footer {
 
 .team-section h2 {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 2rem;
 }
 
 .team-members {
@@ -248,14 +255,15 @@ footer {
 }
 
 .team-member {
-    background: #e6e6fa;  /* Light purple (Lavender) */
+    background: white;
     padding: 30px 20px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    color: #3b306c;
 }
 
 .team-member h3 {
-    color: #333;
+    color: #3b306c;
     margin-bottom: 10px;
 }
 
@@ -265,7 +273,7 @@ footer {
 }
 
 .our-mission h2 {
-    margin-bottom: 20px;
+    margin-bottom: 2rem;
 }
 
 .our-mission p {
@@ -276,11 +284,11 @@ footer {
 
 .navbar .logo a {
     text-decoration: none;
-    color: white;
+    color: #3b306c;
 }
 
 .navbar .logo a:hover {
-    color: #f4a261;
+    color: #13b874;
 }
 
 .member-image {
@@ -433,7 +441,7 @@ footer {
 .submit-btn {
     padding: 12px 20px;
     font-size: 16px;
-    background-color: #4CAF50;
+    background-color: #13b874;
     color: white;
     border: none;
     border-radius: 5px;
@@ -442,11 +450,11 @@ footer {
 }
 
 .submit-btn:hover {
-    background-color: #45a049;
+    background-color: #0f9660;
 }
 
 .submit-btn:active {
-    background-color: #388e3c;
+    background-color: #0c7d50;
 }
 
 .centered-text {
@@ -585,7 +593,7 @@ footer {
 .register-btn {
     width: 100%;
     padding: 12px;
-    background-color: #4CAF50;
+    background-color: #13b874;
     color: white;
     border: none;
     border-radius: 5px;
@@ -595,7 +603,7 @@ footer {
 }
 
 .register-btn:hover {
-    background-color: #45a049;
+    background-color: #0f9660;
 }
 
 .login-link {
@@ -606,7 +614,7 @@ footer {
 }
 
 .login-link a {
-    color: #4CAF50;
+    color: #13b874;
     text-decoration: none;
 }
 
@@ -694,7 +702,7 @@ footer {
 .login-btn {
     width: 100%;
     padding: 12px;
-    background-color: #4CAF50;
+    background-color: #13b874;
     color: white;
     border: none;
     border-radius: 5px;
@@ -705,7 +713,7 @@ footer {
 }
 
 .login-btn:hover {
-    background-color: #45a049;
+    background-color: #0f9660;
 }
 
 .register-link {
@@ -716,10 +724,273 @@ footer {
 }
 
 .register-link a {
-    color: #4CAF50;
+    color: #13b874;
     text-decoration: none;
 }
 
 .register-link a:hover {
     text-decoration: underline;
+}
+
+/* Color Variables */
+:root {
+    --primary: #4B0082;    /* Indigo Purple */
+    --secondary: #FFFFFF;   /* White */
+    --tertiary: #008000;   /* Green */
+}
+
+/* General Styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: var(--secondary);
+}
+
+/* Navigation */
+.navbar {
+    background-color: var(--primary);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo a {
+    color: var(--secondary);
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-links a {
+    color: var(--secondary);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: var(--tertiary);
+}
+
+/* About Us Section */
+.about-us {
+    padding: 3rem 2rem;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+h1 {
+    font-family: 'Tangerine', cursive;
+    font-size: 4rem;
+    color: var(--primary);
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.about-intro {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 3rem;
+    line-height: 1.6;
+}
+
+/* Team Section */
+.team-section {
+    margin: 3rem 0;
+}
+
+.team-section h2 {
+    color: var(--primary);
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.team-members {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 1rem;
+}
+
+.team-member {
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+
+.team-member:hover {
+    transform: translateY(-5px);
+}
+
+.member-image {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 1rem;
+    overflow: hidden;
+    border-radius: 50%;
+    border: 3px solid var(--primary);
+}
+
+.member-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.team-member h3 {
+    color: var(--primary);
+    margin: 1rem 0;
+}
+
+/* Mission Section */
+.our-mission {
+    background-color: var(--primary);
+    color: var(--secondary);
+    padding: 2rem;
+    border-radius: 10px;
+    margin: 3rem 0;
+}
+
+.our-mission h2 {
+    color: var(--secondary);
+    text-align: center;
+}
+
+/* Footer */
+footer {
+    background-color: var(--primary);
+    color: var(--secondary);
+    padding: 2rem;
+    text-align: center;
+}
+
+.social-links {
+    margin-top: 1rem;
+}
+
+.social-icon {
+    color: var(--secondary);
+    font-size: 1.5rem;
+    margin: 0 1rem;
+    transition: color 0.3s;
+}
+
+.social-icon:hover {
+    color: var(--tertiary);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
+    
+    .team-members {
+        grid-template-columns: 1fr;
+    }
+    
+    .container {
+        padding: 0 1rem;
+    }
+}
+
+/* Reset the navbar styles */
+.navbar {
+    background-color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.navbar .logo {
+    color: #3b306c;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.navbar .nav-links {
+    list-style: none;
+    display: flex;
+}
+
+.navbar .nav-links li {
+    margin-left: 20px;
+}
+
+.navbar .nav-links li a {
+    text-decoration: none;
+    color: #3b306c;
+    font-size: 18px;
+    transition: color 0.3s;
+}
+
+.navbar .nav-links li a:hover {
+    color: #13b874;
+}
+
+.navbar .logo a {
+    text-decoration: none;
+    color: #3b306c;
+}
+
+.navbar .logo a:hover {
+    color: #13b874;
+}
+
+/* Remove all font-family changes */
+h1, h2, h3, p, .navbar .logo, .team-member h3, .footer-content p {
+    font-family: Arial, sans-serif;
+}
+
+/* Reset background colors */
+.about-us, .services, .contact-section {
+    background-color: #3b306c;
+    color: white;
+}
+
+/* Reset heading colors */
+.about-us h1,
+.about-us h2,
+.team-section h2,
+.our-mission h2 {
+    color: white;
+}
+
+/* Reset team member card styles */
+.team-member {
+    background: white;
+    color: #3b306c;
+}
+
+.team-member h3 {
+    color: #3b306c;
+}
+
+.team-member p {
+    color: #666;
+}
+
+/* Footer logo styles */
+.footer-logo {
+    margin-bottom: 15px;
+}
+
+.footer-logo .logo-image {
+    height: 50px;  /* Slightly larger in footer */
+    width: auto;
+    object-fit: contain;
 }
