@@ -1,57 +1,86 @@
-// controllers/venuesController.js
-const { getAllVenues, createVenue, updateVenue, deleteVenue } = require('../models/venueModel');
+const venueModel = require('../models/venueModel');
 
 // Get all venues
-async function getAllVenuesController(req, res) {
+async function getAllVenues(req, res) {
     try {
-        const venues = await getAllVenues();
+        const venues = await venueModel.getAllVenues();
         res.status(200).json(venues);
-    } catch (err) {
-        console.error('Error in getAllVenuesController: ', err);
-        res.status(500).send('Internal Server Error');
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching venues', error: error.message });
     }
 }
 
-// Create a new venue
-async function createVenueController(req, res) {
-    const { Venue_id, Venue_Name, Location } = req.body;
-    const venue = { Venue_id, Venue_Name, Location };
-
+// Get venue by ID
+async function getVenueById(req, res) {
+    const { id } = req.params;
     try {
-        await createVenue(venue);
-        res.status(201).send('Venue created successfully');
-    } catch (err) {
-        console.error('Error in createVenueController: ', err);
-        res.status(500).send('Internal Server Error');
+        const venue = await venueModel.getVenueById(id);
+        if (venue) {
+            res.status(200).json(venue);
+        } else {
+            res.status(404).json({ message: 'Venue not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching venue', error: error.message });
+    }
+}
+
+// Create new venue
+async function createVenue(req, res) {
+    const { Venue_Name, Venue_Location, Venue_Capacity, Venue_Type } = req.body;
+    try {
+        const result = await venueModel.createVenue({ 
+            Venue_Name, 
+            Venue_Location, 
+            Venue_Capacity, 
+            Venue_Type 
+        });
+        res.status(201).json({ message: 'Venue created successfully', result });
+    } catch (error) {
+        res.status(500).json({ message: 'Error creating venue', error: error.message });
     }
 }
 
 // Update venue by ID
-async function updateVenueController(req, res) {
-    const { venueId } = req.params;
-    const { Venue_Name, Location } = req.body;
-    const venue = { Venue_Name, Location };
-
+async function updateVenueById(req, res) {
+    const { id } = req.params;
+    const { Venue_Name, Venue_Location, Venue_Capacity, Venue_Type } = req.body;
     try {
-        await updateVenue(venueId, venue);
-        res.status(200).send('Venue updated successfully');
-    } catch (err) {
-        console.error('Error in updateVenueController: ', err);
-        res.status(500).send('Internal Server Error');
+        const result = await venueModel.updateVenueById(id, { 
+            Venue_Name, 
+            Venue_Location, 
+            Venue_Capacity, 
+            Venue_Type 
+        });
+        if (result.affectedRows > 0) {
+            res.status(200).json({ message: 'Venue updated successfully' });
+        } else {
+            res.status(404).json({ message: 'Venue not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating venue', error: error.message });
     }
 }
 
 // Delete venue by ID
-async function deleteVenueController(req, res) {
-    const { venueId } = req.params;
-
+async function deleteVenueById(req, res) {
+    const { id } = req.params;
     try {
-        await deleteVenue(venueId);
-        res.status(200).send('Venue deleted successfully');
-    } catch (err) {
-        console.error('Error in deleteVenueController: ', err);
-        res.status(500).send('Internal Server Error');
+        const result = await venueModel.deleteVenueById(id);
+        if (result.affectedRows > 0) {
+            res.status(200).json({ message: 'Venue deleted successfully' });
+        } else {
+            res.status(404).json({ message: 'Venue not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting venue', error: error.message });
     }
 }
 
-module.exports = { getAllVenuesController, createVenueController, updateVenueController, deleteVenueController };
+module.exports = {
+    getAllVenues,
+    getVenueById,
+    createVenue,
+    updateVenueById,
+    deleteVenueById
+};

@@ -1,96 +1,54 @@
-// models/userModel.js
-const oracledb = require('oracledb');
+const mysql = require('mysql2/promise');
+const { getPool } = require('../db');
 
-// Get all users
 async function getAllUsers() {
-    let connection;
+    const pool = getPool();
+    const connection = await pool.getConnection();
     try {
-        connection = await oracledb.getConnection();
-        const result = await connection.execute(`SELECT * FROM Users`);
-        return result.rows;
-    } catch (err) {
-        console.error("Error in getAllUsers: ", err);
+        const [rows] = await connection.execute(`
+            SELECT User_Id, First_Name, Last_Name, Email, Role FROM Users`);
+        return rows;
     } finally {
-        if (connection) {
-            await connection.close();
-        }
+        connection.release();
     }
 }
 
-// Create a new user
+async function getUserById(id) {
+    const pool = getPool();
+    const connection = await pool.getConnection();
+    try {
+        const [rows] = await connection.execute(`
+            SELECT User_Id, First_Name, Last_Name, Email, Role FROM Users WHERE User_Id = ?`, [id]);
+        return rows[0];
+    } finally {
+        connection.release();
+    }
+}
+
 async function createUser(user) {
-    let connection;
+    const pool = getPool();
+    const connection = await pool.getConnection();
     try {
-        connection = await oracledb.getConnection();
-        const result = await connection.execute(
-            `INSERT INTO Users (User_id, F_name, L_name, Email, Role) VALUES (:1, :2, :3, :4, :5)`,
-            [user.User_id, user.F_name, user.L_name, user.Email, user.Role],
-            { autoCommit: true }
-        );
+        const [result] = await connection.execute(`
+            INSERT INTO Users (First_Name, Last_Name, Email, Role, Password)
+            VALUES (?, ?, ?, ?, ?)`,
+            [user.First_Name, user.Last_Name, user.Email, user.Role, user.Password]);
         return result;
-    } catch (err) {
-        console.error("Error in createUser: ", err);
     } finally {
-        if (connection) {
-            await connection.close();
-        }
+        connection.release();
     }
 }
 
-// Update user by ID
-async function updateUser(userId, user) {
-    let connection;
+async function deleteUserById(id) {
+    const pool = getPool();
+    const connection = await pool.getConnection();
     try {
-        connection = await oracledb.getConnection();
-
-        // Execute the update query
-        const result = await connection.execute(
-            `UPDATE Users SET F_name = :1, L_name = :2, Email = :3, Role = :4 WHERE User_id = :5`,
-            [user.F_name, user.L_name, user.Email, user.Role, userId],
-            { autoCommit: true }
-        );
-
-        if (result.rowsAffected === 0) {
-            throw new Error('User not found with the given ID.');
-        }
-
+        const [result] = await connection.execute(`
+            DELETE FROM Users WHERE User_Id = ?`, [id]);
         return result;
-    } catch (err) {
-        console.error("Error in updateUser: ", err.message || err);
-        throw err;  // Propagate the error
     } finally {
-        if (connection) {
-            await connection.close();
-        }
+        connection.release();
     }
 }
 
-// Delete user by ID
-async function deleteUser(userId) {
-    let connection;
-    try {
-        connection = await oracledb.getConnection();
-
-        // Execute the delete query
-        const result = await connection.execute(
-            `DELETE FROM Users WHERE User_id = :1`,
-            [userId],
-            { autoCommit: true }
-        );
-
-        if (result.rowsAffected === 0) {
-            throw new Error('User not found with the given ID.');
-        }
-
-        return result;
-    } catch (err) {
-        console.error("Error in deleteUser: ", err.message || err);
-        throw err;  // Propagate the error
-    } finally {
-        if (connection) {
-            await connection.close();
-        }
-    }
-}
-
-module.exports = { getAllUsers, createUser, updateUser, deleteUser };
+module.exports = { getAllUsers, getUserById, createUser, deleteUserById };

@@ -1,43 +1,76 @@
-const { getAllPayments, createPayment, updatePayment, deletePayment } = require('../models/PaymentModel'); // Importing model functions
+const paymentModel = require('../models/PaymentModel');
 
-// Controller for getting all payments
-async function getAllPaymentsController(req, res) {
+// Get all payments
+async function getAllPayments(req, res) {
     try {
-        const payments = await getAllPayments();
-        res.json(payments);  // Sending the retrieved payments as JSON response
-    } catch (err) {
-        res.status(500).send("Error getting payments");
+        const payments = await paymentModel.getAllPayments();
+        res.status(200).json(payments);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching payments', error: error.message });
     }
 }
 
-// Controller for creating a new payment
-async function createPaymentController(req, res) {
+// Get payment by ID
+async function getPaymentById(req, res) {
+    const { id } = req.params;
     try {
-        const payment = await createPayment(req.body);  // Pass the payment data from the request body
-        res.status(201).json(payment);  // Respond with the created payment
-    } catch (err) {
-        res.status(500).send("Error creating payment");
+        const payment = await paymentModel.getPaymentById(id);
+        if (payment) {
+            res.status(200).json(payment);
+        } else {
+            res.status(404).json({ message: 'Payment not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching payment', error: error.message });
     }
 }
 
-// Controller for updating a payment by ID
-async function updatePaymentController(req, res) {
+// Create new payment
+async function createPayment(req, res) {
+    const { amount, method, participantId, eventId } = req.body;
     try {
-        const payment = await updatePayment(req.params.paymentId, req.body);  // Update payment with provided ID and data
-        res.json(payment);  // Respond with the updated payment
-    } catch (err) {
-        res.status(500).send("Error updating payment");
+        const result = await paymentModel.createPayment({ amount, method, participantId, eventId });
+        res.status(201).json({ message: 'Payment created successfully', result });
+    } catch (error) {
+        res.status(500).json({ message: 'Error creating payment', error: error.message });
     }
 }
 
-// Controller for deleting a payment by ID
-async function deletePaymentController(req, res) {
+// Update payment by ID
+async function updatePaymentById(req, res) {
+    const { id } = req.params;
+    const { amount, method } = req.body;
     try {
-        await deletePayment(req.params.paymentId);  // Delete payment by provided ID
-        res.status(204).send();  // Respond with no content (204) status on successful deletion
-    } catch (err) {
-        res.status(500).send("Error deleting payment");
+        const result = await paymentModel.updatePaymentById(id, { amount, method });
+        if (result.affectedRows > 0) {
+            res.status(200).json({ message: 'Payment updated successfully' });
+        } else {
+            res.status(404).json({ message: 'Payment not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating payment', error: error.message });
     }
 }
 
-module.exports = { getAllPaymentsController, createPaymentController, updatePaymentController, deletePaymentController };
+// Delete payment by ID
+async function deletePaymentById(req, res) {
+    const { id } = req.params;
+    try {
+        const result = await paymentModel.deletePaymentById(id);
+        if (result.affectedRows > 0) {
+            res.status(200).json({ message: 'Payment deleted successfully' });
+        } else {
+            res.status(404).json({ message: 'Payment not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting payment', error: error.message });
+    }
+}
+
+module.exports = {
+    getAllPayments,
+    getPaymentById,
+    createPayment,
+    updatePaymentById,
+    deletePaymentById
+};

@@ -1,31 +1,12 @@
-// routes/users.js
 const express = require('express');
 const router = express.Router();
-const oracledb = require('oracledb');
-
-router.get('/', async (req, res) => {
-    let connection;
-    try {
-        connection = await oracledb.getConnection();
-        const result = await connection.execute(
-            'SELECT * FROM users',
-            [],
-            { outFormat: oracledb.OUT_FORMAT_OBJECT }
-        );
-        res.json(result.rows);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Database error' });
-    } finally {
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (err) {
-                console.error(err);
-            }
-        }
-    }
-});
+const userController = require('../controller/userController');
+router.get('/', userController.getAllUsers);
+router.get('/:id', userController.getUserById);
+router.post('/', userController.createUser);
+router.put('/:id', userController.updateUserById);
+router.delete('/:id', userController.deleteUserById);
 
 module.exports = router;
 
+//get-all-users fix in all 

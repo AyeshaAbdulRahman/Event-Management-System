@@ -1,12 +1,11 @@
-// routes/teams.js
 const express = require('express');
 const router = express.Router();
-const { getAllTeamsController, createTeamController, updateTeamController, deleteTeamController } = require('../controller/teamsController');
+const teamController = require('../controller/teamsController');
 
-// Routes for teams
-router.get('/', getAllTeamsController);  // Get all teams
-router.post('/', createTeamController);  // Create a new team
-router.put('/:teamId', updateTeamController);  // Update team by ID
-router.delete('/:teamId', deleteTeamController);  // Delete team by ID
+router.get('/', teamController.getAllTeams);
+router.get('/:id', teamController.getTeamById);
+router.post('/', teamController.createTeam);
+router.put('/:id', teamController.updateTeamById);
+router.delete('/:id', teamController.deleteTeamById);
 
 module.exports = router;

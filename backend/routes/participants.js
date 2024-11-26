@@ -1,12 +1,10 @@
-// routes/participants.js
 const express = require('express');
 const router = express.Router();
-const { getAllParticipantsController, createParticipantController, updateParticipantController, deleteParticipantController } = require('../controller/participantsController');
-
-// Routes for participants
-router.get('/', getAllParticipantsController);  // Get all participants
-router.post('/', createParticipantController);  // Create a new participant
-router.put('/:participantId', updateParticipantController);  // Update participant by ID
-router.delete('/:participantId', deleteParticipantController);  // Delete participant by ID
+const participantController = require('../controller/participantsController');
+router.get('/', participantController.getAllParticipants);
+router.get('/:id', participantController.getParticipantById);
+router.post('/', participantController.createParticipant);
+router.put('/:id', participantController.updateParticipantById);
+router.delete('/:id', participantController.deleteParticipantById);
 
 module.exports = router;

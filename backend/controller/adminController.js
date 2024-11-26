@@ -1,65 +1,92 @@
-// controllers/adminsController.js
-const { getAllAdmins, createAdmin, updateAdmin, deleteAdmin } = require('../models/AdminModel');
+const adminModel = require('../models/AdminModel');
 
 // Get all admins
-async function getAllAdminsController(req, res) {
+async function getAllAdmins(req, res) {
     try {
-        const admins = await getAllAdmins();
+        const admins = await adminModel.getAllAdmins();
         res.status(200).json(admins);
-    } catch (err) {
-        console.error('Error in getAllAdminsController: ', err);
-        res.status(500).send('Internal Server Error');
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching admins', error: error.message });
+    }
+}
+
+// Get admin by ID
+async function getAdminById(req, res) {
+    const { id } = req.params;
+    try {
+        const admin = await adminModel.getAdminById(id);
+        if (admin) {
+            res.status(200).json(admin);
+        } else {
+            res.status(404).json({ message: 'Admin not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching admin', error: error.message });
+    }
+}
+
+// Get admin by Email
+async function getAdminByEmail(req, res) {
+    const { email } = req.params;
+    try {
+        const admin = await adminModel.getAdminByEmail(email);
+        if (admin) {
+            res.status(200).json(admin);
+        } else {
+            res.status(404).json({ message: 'Admin not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching admin', error: error.message });
     }
 }
 
 // Create a new admin
-async function createAdminController(req, res) {
-    const { Admin_id, Admin_Name, Role } = req.body;
-    const admin = { Admin_id, Admin_Name, Role };
-
+async function createAdmin(req, res) {
+    const { email, Admin_Level } = req.body;
     try {
-        await createAdmin(admin);
-        res.status(201).send('Admin created successfully');
-    } catch (err) {
-        console.error('Error in createAdminController: ', err);
-        res.status(500).send('Internal Server Error');
+        const result = await adminModel.createAdmin({ email, Admin_Level });
+        res.status(201).json({ message: 'Admin created successfully', result });
+    } catch (error) {
+        res.status(500).json({ message: 'Error creating admin', error: error.message });
     }
 }
 
 // Update admin by ID
-async function updateAdminController(req, res) {
-    const { adminId } = req.params;
-    const { Admin_Name, Role } = req.body;
-    const admin = { Admin_Name, Role };
-
+async function updateAdminById(req, res) {
+    const { id } = req.params;
+    const { Admin_Level } = req.body;
     try {
-        await updateAdmin(adminId, admin);
-        res.status(200).send('Admin updated successfully');
-    } catch (err) {
-        console.error('Error in updateAdminController: ', err);
-        if (err.message.includes('not found')) {
-            res.status(404).send('Admin not found');
+        const result = await adminModel.updateAdminById(id, { Admin_Level });
+        if (result.affectedRows > 0) {
+            res.status(200).json({ message: 'Admin updated successfully' });
         } else {
-            res.status(500).send('Internal Server Error');
+            res.status(404).json({ message: 'Admin not found' });
         }
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating admin', error: error.message });
     }
 }
 
 // Delete admin by ID
-async function deleteAdminController(req, res) {
-    const { adminId } = req.params;
-
+async function deleteAdminById(req, res) {
+    const { id } = req.params;
     try {
-        await deleteAdmin(adminId);
-        res.status(200).send('Admin deleted successfully');
-    } catch (err) {
-        console.error('Error in deleteAdminController: ', err);
-        if (err.message.includes('not found')) {
-            res.status(404).send('Admin not found');
+        const result = await adminModel.deleteAdminById(id);
+        if (result.affectedRows > 0) {
+            res.status(200).json({ message: 'Admin deleted successfully' });
         } else {
-            res.status(500).send('Internal Server Error');
+            res.status(404).json({ message: 'Admin not found' });
         }
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting admin', error: error.message });
     }
 }
 
-module.exports = { getAllAdminsController, createAdminController, updateAdminController, deleteAdminController };
+module.exports = {
+    getAllAdmins,
+    getAdminById,
+    getAdminByEmail,
+    createAdmin,
+    updateAdminById,
+    deleteAdminById
+};

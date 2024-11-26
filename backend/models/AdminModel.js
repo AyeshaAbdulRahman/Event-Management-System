@@ -1,87 +1,92 @@
-const oracledb = require('oracledb');
+const mysql = require('mysql2/promise');
+const { getPool } = require('../db');
 
-// Get all admins
 async function getAllAdmins() {
-    let connection;
+    const pool = getPool();
+    const connection = await pool.getConnection();
     try {
-        connection = await oracledb.getConnection();
-        const result = await connection.execute(`SELECT * FROM Admins`);
-        return result.rows;
-    } catch (err) {
-        console.error("Error in getAllAdmins: ", err);
+        const [rows] = await connection.execute(`
+            SELECT a.Admin_Id, u.Email, u.First_Name, u.Last_Name, a.Admin_Level
+            FROM Admins a
+            JOIN Users u ON a.User_Id = u.User_Id`);
+        return rows;
     } finally {
-        if (connection) await connection.close();
+        connection.release();
     }
 }
 
-// Create a new admin
+async function getAdminById(id) {
+    const pool = getPool();
+    const connection = await pool.getConnection();
+    try {
+        const [rows] = await connection.execute(`
+            SELECT a.Admin_Id, u.Email, u.First_Name, u.Last_Name, a.Admin_Level
+            FROM Admins a
+            JOIN Users u ON a.User_Id = u.User_Id
+            WHERE a.Admin_Id = ?`, [id]);
+        return rows[0]; // Return specific admin details
+    } finally {
+        connection.release();
+    }
+}
+
+async function getAdminByEmail(email) {
+    const pool = getPool();
+    const connection = await pool.getConnection();
+    try {
+        const [rows] = await connection.execute(`
+            SELECT a.Admin_Id, u.Email, u.First_Name, u.Last_Name, a.Admin_Level
+            FROM Admins a
+            JOIN Users u ON a.User_Id = u.User_Id
+            WHERE u.Email = ?`, [email]);
+        return rows[0]; // Return specific admin details
+    } finally {
+        connection.release();
+    }
+}
+
 async function createAdmin(admin) {
-    let connection;
+    const pool = getPool();
+    const connection = await pool.getConnection();
     try {
-        connection = await oracledb.getConnection();
-        const result = await connection.execute(
-            `INSERT INTO Admins (Admin_id, Admin_Name, Role) VALUES (:1, :2, :3)`,
-            [admin.Admin_id, admin.Admin_Name, admin.Role],
-            { autoCommit: true }
-        );
+        const [result] = await connection.execute(`
+            INSERT INTO Admins (User_Id, Admin_Level)
+            SELECT User_Id, ? FROM Users WHERE Email = ?`, [admin.Admin_Level, admin.email]);
         return result;
-    } catch (err) {
-        console.error("Error in createAdmin: ", err);
     } finally {
-        if (connection) await connection.close();
+        connection.release();
     }
 }
 
-// Update admin by ID
-async function updateAdmin(adminId, admin) {
-    let connection;
+async function updateAdminById(id, admin) {
+    const pool = getPool();
+    const connection = await pool.getConnection();
     try {
-        connection = await oracledb.getConnection();
-
-        // Execute the update query
-        const result = await connection.execute(
-            `UPDATE Admins SET Admin_Name = :1, Role = :2 WHERE Admin_id = :3`,
-            [admin.Admin_Name, admin.Role, adminId],
-            { autoCommit: true }
-        );
-
-        if (result.rowsAffected === 0) {
-            throw new Error('Admin not found with the given ID.');
-        }
-
+        const [result] = await connection.execute(`
+            UPDATE Admins a
+            JOIN Users u ON a.User_Id = u.User_Id
+            SET a.Admin_Level = ?
+            WHERE a.Admin_Id = ?`, [admin.Admin_Level, id]);
         return result;
-    } catch (err) {
-        console.error("Error in updateAdmin: ", err.message || err);
-        throw err;  // Propagate the error
     } finally {
-        if (connection) await connection.close();
+        connection.release();
     }
 }
 
-// Delete admin by ID
-async function deleteAdmin(adminId) {
-    let connection;
+async function deleteAdminById(id) {
+    const pool = getPool();
+    const connection = await pool.getConnection();
     try {
-        connection = await oracledb.getConnection();
-
-        // Execute the delete query
-        const result = await connection.execute(
-            `DELETE FROM Admins WHERE Admin_id = :1`,
-            [adminId],
-            { autoCommit: true }
-        );
-
-        if (result.rowsAffected === 0) {
-            throw new Error('Admin not found with the given ID.');
-        }
-
+        const [result] = await connection.execute(`
+            DELETE a, u
+            FROM Admins a
+            JOIN Users u ON a.User_Id = u.User_Id
+            WHERE a.Admin_Id = ?`, [id]);
         return result;
-    } catch (err) {
-        console.error("Error in deleteAdmin: ", err.message || err);
-        throw err;  // Propagate the error
     } finally {
-        if (connection) await connection.close();
+        connection.release();
     }
 }
 
-module.exports = { getAllAdmins, createAdmin, updateAdmin, deleteAdmin };
+module.exports = { getAllAdmins, getAdminById, getAdminByEmail, createAdmin, updateAdminById, deleteAdminById };
+

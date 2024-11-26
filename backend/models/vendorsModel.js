@@ -1,55 +1,53 @@
 const mysql = require('mysql2/promise');
 const { getPool } = require('../db');
 
-async function getAllVenues() {
+async function getAllVendors() {
     const pool = getPool();
     const connection = await pool.getConnection();
     try {
         const [rows] = await connection.execute(`
-            SELECT Venue_Id, Venue_Name, City FROM Venues`);
+            SELECT Vendor_Id, Vendor_Name FROM Vendors`);
         return rows;
     } finally {
         connection.release();
     }
 }
 
-async function getVenueById(id) {
+async function getVendorById(id) {
     const pool = getPool();
     const connection = await pool.getConnection();
     try {
         const [rows] = await connection.execute(`
-            SELECT Venue_Id, Venue_Name, City FROM Venues WHERE Venue_Id = ?`, [id]);
+            SELECT Vendor_Id, Vendor_Name FROM Vendors WHERE Vendor_Id = ?`, [id]);
         return rows[0];
     } finally {
         connection.release();
     }
 }
 
-async function createVenue(venue) {
+async function createVendor(vendor) {
     const pool = getPool();
     const connection = await pool.getConnection();
     try {
         const [result] = await connection.execute(`
-            INSERT INTO Venues (Venue_Name, City)
-            VALUES (?, ?)`,
-            [venue.Venue_Name, venue.City]);
+            INSERT INTO Vendors (Vendor_Name) VALUES (?)`,
+            [vendor.Vendor_Name]);
         return result;
     } finally {
         connection.release();
     }
 }
 
-async function deleteVenueById(id) {
+async function deleteVendorById(id) {
     const pool = getPool();
     const connection = await pool.getConnection();
     try {
         const [result] = await connection.execute(`
-            DELETE FROM Venues WHERE Venue_Id = ?`, [id]);
+            DELETE FROM Vendors WHERE Vendor_Id = ?`, [id]);
         return result;
     } finally {
         connection.release();
     }
 }
 
-module.exports = { getAllVenues, getVenueById, createVenue, deleteVenueById };
-
+module.exports = { getAllVendors, getVendorById, createVendor, deleteVendorById };

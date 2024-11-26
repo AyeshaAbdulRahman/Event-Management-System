@@ -1,13 +1,10 @@
-// routes/registration.js
 const express = require('express');
 const router = express.Router();
-const { getAllRegistrationsController, createRegistrationController, updateRegistrationController, deleteRegistrationController } = require('../controller/registrationController');
-
-
-// Routes for registrations
-router.get('/', getAllRegistrationsController);  // Get all registrations
-router.post('/', createRegistrationController);  // Create a new registration
-router.put('/:registrationId', updateRegistrationController);  // Update registration by ID
-router.delete('/:registrationId', deleteRegistrationController);  // Delete registration by ID
+const registrationController = require('../controller/registration_Controller');
+router.get('/', registrationController.getAllRegistrations);
+router.get('/:id', registrationController.getRegistrationById);
+router.post('/', registrationController.createRegistration);
+router.put('/:id', registrationController.updateRegistrationById);
+router.delete('/:id', registrationController.deleteRegistrationById);
 
 module.exports = router;

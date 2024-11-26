@@ -1,60 +1,92 @@
-const oracledb = require('oracledb');
+const mysql = require('mysql2/promise');
+const { getPool } = require('../db');
 
 async function getAllClients() {
-    let connection;
+    const pool = getPool();
+    const connection = await pool.getConnection();
     try {
-        connection = await oracledb.getConnection();
-        const result = await connection.execute(`SELECT * FROM Clients`);
-        return result.rows;
+        const [rows] = await connection.execute(`
+            SELECT c.Client_Id, u.Email, u.First_Name, u.Last_Name
+            FROM Clients c
+            JOIN Users u ON c.User_Id = u.User_Id`);
+        return rows;
     } finally {
-        if (connection) await connection.close();
+        connection.release();
+    }
+}
+
+async function getClientById(id) {
+    const pool = getPool();
+    const connection = await pool.getConnection();
+    try {
+        const [rows] = await connection.execute(`
+            SELECT c.Client_Id, u.Email, u.First_Name, u.Last_Name
+            FROM Clients c
+            JOIN Users u ON c.User_Id = u.User_Id
+            WHERE c.Client_Id = ?`, [id]);
+        return rows[0]; // Return single row for specific client
+    } finally {
+        connection.release();
+    }
+}
+
+async function getClientByEmail(email) {
+    const pool = getPool();
+    const connection = await pool.getConnection();
+    try {
+        const [rows] = await connection.execute(`
+            SELECT c.Client_Id, u.Email, u.First_Name, u.Last_Name
+            FROM Clients c
+            JOIN Users u ON c.User_Id = u.User_Id
+            WHERE u.Email = ?`, [email]);
+        return rows[0]; // Return single row for specific client
+    } finally {
+        connection.release();
     }
 }
 
 async function createClient(client) {
-    let connection;
+    const pool = getPool();
+    const connection = await pool.getConnection();
     try {
-        connection = await oracledb.getConnection();
-        const result = await connection.execute(
-            `INSERT INTO Clients (Client_id, User_id) VALUES (:1, :2)`,
-            [client.Client_id, client.User_id],
-            { autoCommit: true }
-        );
+        const [result] = await connection.execute(`
+            INSERT INTO Clients (User_Id)
+            SELECT User_Id FROM Users WHERE Email = ?`, [client.email]);
         return result;
     } finally {
-        if (connection) await connection.close();
+        connection.release();
     }
 }
 
-async function updateClient(id, client) {
-    let connection;
+async function updateClientById(id, client) {
+    const pool = getPool();
+    const connection = await pool.getConnection();
     try {
-        connection = await oracledb.getConnection();
-        const result = await connection.execute(
-            `UPDATE Clients SET User_id = :1 WHERE Client_id = :2`,
-            [client.User_id, id],
-            { autoCommit: true }
-        );
+        const [result] = await connection.execute(`
+            UPDATE Clients c
+            JOIN Users u ON c.User_Id = u.User_Id
+            SET u.First_Name = ?, u.Last_Name = ?
+            WHERE c.Client_Id = ?`, [client.firstName, client.lastName, id]);
         return result;
     } finally {
-        if (connection) await connection.close();
+        connection.release();
     }
 }
 
-async function deleteClient(id) {
-    let connection;
+async function deleteClientById(id) {
+    const pool = getPool();
+    const connection = await pool.getConnection();
     try {
-        connection = await oracledb.getConnection();
-        const result = await connection.execute(
-            `DELETE FROM Clients WHERE Client_id = :1`,
-            [id],
-            { autoCommit: true }
-        );
+        const [result] = await connection.execute(`
+            DELETE c, u
+            FROM Clients c
+            JOIN Users u ON c.User_Id = u.User_Id
+            WHERE c.Client_Id = ?`, [id]);
         return result;
     } finally {
-        if (connection) await connection.close();
+        connection.release();
     }
 }
 
-module.exports = { getAllClients, createClient, updateClient, deleteClient };
+module.exports = { getAllClients, getClientById, getClientByEmail, createClient, updateClientById, deleteClientById };
 

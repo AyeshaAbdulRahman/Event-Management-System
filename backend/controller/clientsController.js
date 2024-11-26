@@ -1,57 +1,76 @@
-// controllers/clientsController.js
-const { getAllClients, createClient, updateClient, deleteClient } = require('../models/clientModel');
+const clientModel = require('../models/clientModel');
 
 // Get all clients
-async function getAllClientsController(req, res) {
+async function getAllClients(req, res) {
     try {
-        const clients = await getAllClients();
+        const clients = await clientModel.getAllClients();
         res.status(200).json(clients);
-    } catch (err) {
-        console.error('Error in getAllClientsController: ', err);
-        res.status(500).send('Internal Server Error');
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching clients', error: error.message });
     }
 }
 
-// Create a new client
-async function createClientController(req, res) {
-    const { Client_id, Client_Name, Contact_Info } = req.body;
-    const client = { Client_id, Client_Name, Contact_Info };
-
+// Get client by ID
+async function getClientById(req, res) {
+    const { id } = req.params;
     try {
-        await createClient(client);
-        res.status(201).send('Client created successfully');
-    } catch (err) {
-        console.error('Error in createClientController: ', err);
-        res.status(500).send('Internal Server Error');
+        const client = await clientModel.getClientById(id);
+        if (client) {
+            res.status(200).json(client);
+        } else {
+            res.status(404).json({ message: 'Client not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching client', error: error.message });
+    }
+}
+
+// Create new client
+async function createClient(req, res) {
+    const { email, firstName, lastName } = req.body;
+    try {
+        const result = await clientModel.createClient({ email, firstName, lastName });
+        res.status(201).json({ message: 'Client created successfully', result });
+    } catch (error) {
+        res.status(500).json({ message: 'Error creating client', error: error.message });
     }
 }
 
 // Update client by ID
-async function updateClientController(req, res) {
-    const { clientId } = req.params;
-    const { Client_Name, Contact_Info } = req.body;
-    const client = { Client_Name, Contact_Info };
-
+async function updateClientById(req, res) {
+    const { id } = req.params;
+    const { firstName, lastName } = req.body;
     try {
-        await updateClient(clientId, client);
-        res.status(200).send('Client updated successfully');
-    } catch (err) {
-        console.error('Error in updateClientController: ', err);
-        res.status(500).send('Internal Server Error');
+        const result = await clientModel.updateClientById(id, { firstName, lastName });
+        if (result.affectedRows > 0) {
+            res.status(200).json({ message: 'Client updated successfully' });
+        } else {
+            res.status(404).json({ message: 'Client not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating client', error: error.message });
     }
 }
 
 // Delete client by ID
-async function deleteClientController(req, res) {
-    const { clientId } = req.params;
-
+async function deleteClientById(req, res) {
+    const { id } = req.params;
     try {
-        await deleteClient(clientId);
-        res.status(200).send('Client deleted successfully');
-    } catch (err) {
-        console.error('Error in deleteClientController: ', err);
-        res.status(500).send('Internal Server Error');
+        const result = await clientModel.deleteClientById(id);
+        if (result.affectedRows > 0) {
+            res.status(200).json({ message: 'Client deleted successfully' });
+        } else {
+            res.status(404).json({ message: 'Client not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting client', error: error.message });
     }
 }
 
-module.exports = { getAllClientsController, createClientController, updateClientController, deleteClientController };
+module.exports = {
+    getAllClients,
+    getClientById,
+    createClient,
+    updateClientById,
+    deleteClientById
+};

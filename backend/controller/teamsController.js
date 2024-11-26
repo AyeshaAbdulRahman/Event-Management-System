@@ -1,57 +1,71 @@
-// controllers/teamsController.js
-const { getAllTeams, createTeam, updateTeam, deleteTeam } = require('../models/teamModel');
+const teamModel = require('../models/teamModel');
 
 // Get all teams
-async function getAllTeamsController(req, res) {
+async function getAllTeams(req, res) {
     try {
-        const teams = await getAllTeams();
+        const teams = await teamModel.getAllTeams();
         res.status(200).json(teams);
-    } catch (err) {
-        console.error('Error in getAllTeamsController: ', err);
-        res.status(500).send('Internal Server Error');
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching teams', error: error.message });
     }
 }
 
-// Create a new team
-async function createTeamController(req, res) {
-    const { Team_id, Team_Name, Leader_id } = req.body;
-    const team = { Team_id, Team_Name, Leader_id };
-
+async function getTeamById(req, res) {
+    const { id } = req.params;
     try {
-        await createTeam(team);
-        res.status(201).send('Team created successfully');
-    } catch (err) {
-        console.error('Error in createTeamController: ', err);
-        res.status(500).send('Internal Server Error');
+        const team = await teamModel.getTeamById(id);
+        if (team) {
+            res.status(200).json(team);
+        } else {
+            res.status(404).json({ message: 'Team not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching team', error: error.message });
     }
 }
-
-// Update team by ID
-async function updateTeamController(req, res) {
-    const { teamId } = req.params;
-    const { Team_Name, Leader_id } = req.body;
-    const team = { Team_Name, Leader_id };
-
+async function createTeam(req, res) {
+    const { name, leaderId } = req.body;
     try {
-        await updateTeam(teamId, team);
-        res.status(200).send('Team updated successfully');
-    } catch (err) {
-        console.error('Error in updateTeamController: ', err);
-        res.status(500).send('Internal Server Error');
+        const result = await teamModel.createTeam({ name, leaderId });
+        res.status(201).json({ message: 'Team created successfully', result });
+    } catch (error) {
+        res.status(500).json({ message: 'Error creating team', error: error.message });
     }
 }
 
-// Delete team by ID
-async function deleteTeamController(req, res) {
-    const { teamId } = req.params;
-
+async function updateTeamById(req, res) {
+    const { id } = req.params;
+    const { name, leaderId } = req.body;
     try {
-        await deleteTeam(teamId);
-        res.status(200).send('Team deleted successfully');
-    } catch (err) {
-        console.error('Error in deleteTeamController: ', err);
-        res.status(500).send('Internal Server Error');
+        const result = await teamModel.updateTeamById(id, { name, leaderId });
+        if (result.affectedRows > 0) {
+            res.status(200).json({ message: 'Team updated successfully' });
+        } else {
+            res.status(404).json({ message: 'Team not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating team', error: error.message });
     }
 }
 
-module.exports = { getAllTeamsController, createTeamController, updateTeamController, deleteTeamController };
+async function deleteTeamById(req, res) {
+    const { id } = req.params;
+    try {
+        const result = await teamModel.deleteTeamById(id);
+        if (result.affectedRows > 0) {
+            res.status(200).json({ message: 'Team deleted successfully' });
+        } else {
+            res.status(404).json({ message: 'Team not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting team', error: error.message });
+    }
+}
+
+module.exports = {
+    getAllTeams,
+    getTeamById,
+    createTeam,
+    updateTeamById,
+    deleteTeamById
+};

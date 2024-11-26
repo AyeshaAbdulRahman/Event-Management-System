@@ -1,57 +1,76 @@
-// controllers/tasksController.js
-const { getAllTasks, createTask, updateTask, deleteTask } = require('../models/taskModel');
+const taskModel = require('../models/taskModel');
 
 // Get all tasks
-async function getAllTasksController(req, res) {
+async function getAllTasks(req, res) {
     try {
-        const tasks = await getAllTasks();
+        const tasks = await taskModel.getAllTasks();
         res.status(200).json(tasks);
-    } catch (err) {
-        console.error('Error in getAllTasksController: ', err);
-        res.status(500).send('Internal Server Error');
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching tasks', error: error.message });
     }
 }
 
-// Create a new task
-async function createTaskController(req, res) {
-    const { Task_id, Task_Name, Assigned_To } = req.body;
-    const task = { Task_id, Task_Name, Assigned_To };
-
+// Get task by ID
+async function getTaskById(req, res) {
+    const { id } = req.params;
     try {
-        await createTask(task);
-        res.status(201).send('Task created successfully');
-    } catch (err) {
-        console.error('Error in createTaskController: ', err);
-        res.status(500).send('Internal Server Error');
+        const task = await taskModel.getTaskById(id);
+        if (task) {
+            res.status(200).json(task);
+        } else {
+            res.status(404).json({ message: 'Task not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching task', error: error.message });
+    }
+}
+
+// Create new task
+async function createTask(req, res) {
+    const { name, status, teamId } = req.body;
+    try {
+        const result = await taskModel.createTask({ name, status, teamId });
+        res.status(201).json({ message: 'Task created successfully', result });
+    } catch (error) {
+        res.status(500).json({ message: 'Error creating task', error: error.message });
     }
 }
 
 // Update task by ID
-async function updateTaskController(req, res) {
-    const { taskId } = req.params;
-    const { Task_Name, Assigned_To } = req.body;
-    const task = { Task_Name, Assigned_To };
-
+async function updateTaskById(req, res) {
+    const { id } = req.params;
+    const { name, status, teamId } = req.body;
     try {
-        await updateTask(taskId, task);
-        res.status(200).send('Task updated successfully');
-    } catch (err) {
-        console.error('Error in updateTaskController: ', err);
-        res.status(500).send('Internal Server Error');
+        const result = await taskModel.updateTaskById(id, { name, status, teamId });
+        if (result.affectedRows > 0) {
+            res.status(200).json({ message: 'Task updated successfully' });
+        } else {
+            res.status(404).json({ message: 'Task not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating task', error: error.message });
     }
 }
 
 // Delete task by ID
-async function deleteTaskController(req, res) {
-    const { taskId } = req.params;
-
+async function deleteTaskById(req, res) {
+    const { id } = req.params;
     try {
-        await deleteTask(taskId);
-        res.status(200).send('Task deleted successfully');
-    } catch (err) {
-        console.error('Error in deleteTaskController: ', err);
-        res.status(500).send('Internal Server Error');
+        const result = await taskModel.deleteTaskById(id);
+        if (result.affectedRows > 0) {
+            res.status(200).json({ message: 'Task deleted successfully' });
+        } else {
+            res.status(404).json({ message: 'Task not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting task', error: error.message });
     }
 }
 
-module.exports = { getAllTasksController, createTaskController, updateTaskController, deleteTaskController };
+module.exports = {
+    getAllTasks,
+    getTaskById,
+    createTask,
+    updateTaskById,
+    deleteTaskById
+};

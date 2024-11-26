@@ -1,59 +1,54 @@
-const oracledb = require('oracledb');
+const mysql = require('mysql2/promise');
+const { getPool } = require('../db');
 
 async function getAllTeams() {
-    let connection;
+    const pool = getPool();
+    const connection = await pool.getConnection();
     try {
-        connection = await oracledb.getConnection();
-        const result = await connection.execute(`SELECT * FROM Teams`);
-        return result.rows;
+        const [rows] = await connection.execute(`
+            SELECT Team_Id, Team_Name FROM Teams`);
+        return rows;
     } finally {
-        if (connection) await connection.close();
+        connection.release();
+    }
+}
+
+async function getTeamById(id) {
+    const pool = getPool();
+    const connection = await pool.getConnection();
+    try {
+        const [rows] = await connection.execute(`
+            SELECT Team_Id, Team_Name FROM Teams WHERE Team_Id = ?`, [id]);
+        return rows[0];
+    } finally {
+        connection.release();
     }
 }
 
 async function createTeam(team) {
-    let connection;
+    const pool = getPool();
+    const connection = await pool.getConnection();
     try {
-        connection = await oracledb.getConnection();
-        const result = await connection.execute(
-            `INSERT INTO Teams (Team_id, Team_name) VALUES (:1, :2)`,
-            [team.Team_id, team.Team_name],
-            { autoCommit: true }
-        );
+        const [result] = await connection.execute(`
+            INSERT INTO Teams (Team_Name) VALUES (?)`,
+            [team.Team_Name]);
         return result;
     } finally {
-        if (connection) await connection.close();
+        connection.release();
     }
 }
 
-async function updateTeam(id, team) {
-    let connection;
+async function deleteTeamById(id) {
+    const pool = getPool();
+    const connection = await pool.getConnection();
     try {
-        connection = await oracledb.getConnection();
-        const result = await connection.execute(
-            `UPDATE Teams SET Team_name = :1 WHERE Team_id = :2`,
-            [team.Team_name, id],
-            { autoCommit: true }
-        );
+        const [result] = await connection.execute(`
+            DELETE FROM Teams WHERE Team_Id = ?`, [id]);
         return result;
     } finally {
-        if (connection) await connection.close();
+        connection.release();
     }
 }
 
-async function deleteTeam(id) {
-    let connection;
-    try {
-        connection = await oracledb.getConnection();
-        const result = await connection.execute(
-            `DELETE FROM Teams WHERE Team_id = :1`,
-            [id],
-            { autoCommit: true }
-        );
-        return result;
-    } finally {
-        if (connection) await connection.close();
-    }
-}
+module.exports = { getAllTeams, getTeamById, createTeam, deleteTeamById };
 
-module.exports = { getAllTeams, createTeam, updateTeam, deleteTeam };

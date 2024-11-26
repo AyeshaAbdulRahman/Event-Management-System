@@ -1,60 +1,62 @@
-const oracledb = require('oracledb');
+const mysql = require('mysql2/promise');
+const { getPool } = require('../db');
 
 async function getAllRegistrations() {
-    let connection;
+    const pool = getPool();
+    const connection = await pool.getConnection();
     try {
-        connection = await oracledb.getConnection();
-        const result = await connection.execute(`SELECT * FROM Registrations`);
-        return result.rows;
+        const [rows] = await connection.execute(`
+            SELECT r.Registration_Id, p.Participant_Name, pa.Amount
+            FROM Registrations r
+            JOIN Participants p ON r.Participant_Id = p.Participant_Id
+            JOIN Payments pa ON r.Payment_Id = pa.Payment_Id`);
+        return rows;
     } finally {
-        if (connection) await connection.close();
+        connection.release();
+    }
+}
+
+async function getRegistrationById(id) {
+    const pool = getPool();
+    const connection = await pool.getConnection();
+    try {
+        const [rows] = await connection.execute(`
+            SELECT r.Registration_Id, p.Participant_Name, pa.Amount
+            FROM Registrations r
+            JOIN Participants p ON r.Participant_Id = p.Participant_Id
+            JOIN Payments pa ON r.Payment_Id = pa.Payment_Id
+            WHERE r.Registration_Id = ?`, [id]);
+        return rows[0];
+    } finally {
+        connection.release();
     }
 }
 
 async function createRegistration(registration) {
-    let connection;
+    const pool = getPool();
+    const connection = await pool.getConnection();
     try {
-        connection = await oracledb.getConnection();
-        const result = await connection.execute(
-            `INSERT INTO Registrations (Registration_id, Participant_id, Event_id) VALUES (:1, :2, :3)`,
-            [registration.Registration_id, registration.Participant_id, registration.Event_id],
-            { autoCommit: true }
-        );
+        const [result] = await connection.execute(`
+            INSERT INTO Registrations (Participant_Id, Payment_Id)
+            VALUES (?, ?)`,
+            [registration.Participant_Id, registration.Payment_Id]);
         return result;
     } finally {
-        if (connection) await connection.close();
+        connection.release();
     }
 }
 
-async function updateRegistration(id, registration) {
-    let connection;
+async function deleteRegistrationById(id) {
+    const pool = getPool();
+    const connection = await pool.getConnection();
     try {
-        connection = await oracledb.getConnection();
-        const result = await connection.execute(
-            `UPDATE Registrations SET Participant_id = :1, Event_id = :2 WHERE Registration_id = :3`,
-            [registration.Participant_id, registration.Event_id, id],
-            { autoCommit: true }
-        );
+        const [result] = await connection.execute(`
+            DELETE FROM Registrations WHERE Registration_Id = ?`, [id]);
         return result;
     } finally {
-        if (connection) await connection.close();
+        connection.release();
     }
 }
 
-async function deleteRegistration(id) {
-    let connection;
-    try {
-        connection = await oracledb.getConnection();
-        const result = await connection.execute(
-            `DELETE FROM Registrations WHERE Registration_id = :1`,
-            [id],
-            { autoCommit: true }
-        );
-        return result;
-    } finally {
-        if (connection) await connection.close();
-    }
-}
-
-module.exports = { getAllRegistrations, createRegistration, updateRegistration, deleteRegistration };
+module.exports = { getAllRegistrations, getRegistrationById, createRegistration, deleteRegistrationById };
 

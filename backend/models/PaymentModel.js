@@ -1,59 +1,76 @@
-const oracledb = require('oracledb');
+const mysql = require('mysql2/promise');
+const { getPool } = require('../db');
 
 async function getAllPayments() {
-    let connection;
+    const pool = getPool();
+    const connection = await pool.getConnection();
     try {
-        connection = await oracledb.getConnection();
-        const result = await connection.execute(`SELECT * FROM Payment`);
-        return result.rows;
+        const [rows] = await connection.execute(`
+            SELECT p.Payment_Id, p.Amount, pt.Participant_Name
+            FROM Payments p
+            JOIN Participants pt ON p.Participant_Id = pt.Participant_Id`);
+        return rows;
     } finally {
-        if (connection) await connection.close();
+        connection.release();
     }
-}   
+}
+
+async function getPaymentById(id) {
+    const pool = getPool();
+    const connection = await pool.getConnection();
+    try {
+        const [rows] = await connection.execute(`
+            SELECT p.Payment_Id, p.Amount, pt.Participant_Name
+            FROM Payments p
+            JOIN Participants pt ON p.Participant_Id = pt.Participant_Id
+            WHERE p.Payment_Id = ?`, [id]);
+        return rows[0]; // Return specific payment details
+    } finally {
+        connection.release();
+    }
+}
 
 async function createPayment(payment) {
-    let connection;
+    const pool = getPool();
+    const connection = await pool.getConnection();
     try {
-        connection = await oracledb.getConnection();
-        const result = await connection.execute(
-            `INSERT INTO Payment (Payment_id, Participant_id, Amount) VALUES (:1, :2, :3)`,
-            [payment.Payment_id, payment.Participant_id, payment.Amount],
-            { autoCommit: true }
-        );
+        const [result] = await connection.execute(`
+            INSERT INTO Payments (Amount, Participant_Id)
+            SELECT ?, pt.Participant_Id FROM Participants pt WHERE pt.Participant_Name = ?`,
+            [payment.Amount, payment.Participant_Name]);
         return result;
     } finally {
-        if (connection) await connection.close();
+        connection.release();
     }
 }
 
-async function updatePayment(id, payment) {
-    let connection;
+async function updatePaymentById(id, payment) {
+    const pool = getPool();
+    const connection = await pool.getConnection();
     try {
-        connection = await oracledb.getConnection();
-        const result = await connection.execute(
-            `UPDATE Payment SET Participant_id = :1, Amount = :2 WHERE Payment_id = :3`,
-            [payment.Participant_id, payment.Amount, id],
-            { autoCommit: true }
-        );
+        const [result] = await connection.execute(`
+            UPDATE Payments p
+            JOIN Participants pt ON p.Participant_Id = pt.Participant_Id
+            SET p.Amount = ?
+            WHERE p.Payment_Id = ? AND pt.Participant_Name = ?`,
+            [payment.Amount, id, payment.Participant_Name]);
         return result;
     } finally {
-        if (connection) await connection.close();
+        connection.release();
     }
 }
 
-async function deletePayment(id) {
-    let connection;
+async function deletePaymentById(id) {
+    const pool = getPool();
+    const connection = await pool.getConnection();
     try {
-        connection = await oracledb.getConnection();
-        const result = await connection.execute(
-            `DELETE FROM Payment WHERE Payment_id = :1`,
-            [id],
-            { autoCommit: true }
-        );
+        const [result] = await connection.execute(`
+            DELETE p FROM Payments p WHERE p.Payment_Id = ?`, [id]);
         return result;
     } finally {
-        if (connection) await connection.close();
+        connection.release();
     }
 }
 
-module.exports = { getAllPayments, createPayment, updatePayment, deletePayment };
+module.exports = { getAllPayments, getPaymentById, createPayment, updatePaymentById, deletePaymentById };
+

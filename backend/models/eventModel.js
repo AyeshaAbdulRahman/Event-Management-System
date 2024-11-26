@@ -1,59 +1,89 @@
-const oracledb = require('oracledb');
+const mysql = require('mysql2/promise');
+const { getPool } = require('../db');
 
 async function getAllEvents() {
-    let connection;
+    const pool = getPool();
+    const connection = await pool.getConnection();
     try {
-        connection = await oracledb.getConnection();
-        const result = await connection.execute(`SELECT * FROM Events`);
-        return result.rows;
+        const [rows] = await connection.execute(`
+            SELECT e.Event_Id, e.Event_Name, e.Event_Type, e.Date, c.Client_Id
+            FROM Events e
+            JOIN Clients c ON e.Client_Id = c.Client_Id`);
+        return rows;
     } finally {
-        if (connection) await connection.close();
+        connection.release();
+    }
+}
+
+async function getEventById(id) {
+    const pool = getPool();
+    const connection = await pool.getConnection();
+    try {
+        const [rows] = await connection.execute(`
+            SELECT e.Event_Id, e.Event_Name, e.Event_Type, e.Date, c.Client_Id
+            FROM Events e
+            JOIN Clients c ON e.Client_Id = c.Client_Id
+            WHERE e.Event_Id = ?`, [id]);
+        return rows[0]; // Return specific event details
+    } finally {
+        connection.release();
+    }
+}
+
+async function getEventByName(eventName) {
+    const pool = getPool();
+    const connection = await pool.getConnection();
+    try {
+        const [rows] = await connection.execute(`
+            SELECT e.Event_Id, e.Event_Name, e.Event_Type, e.Date, c.Client_Id
+            FROM Events e
+            JOIN Clients c ON e.Client_Id = c.Client_Id
+            WHERE e.Event_Name = ?`, [eventName]);
+        return rows[0]; // Return specific event details
+    } finally {
+        connection.release();
     }
 }
 
 async function createEvent(event) {
-    let connection;
+    const pool = getPool();
+    const connection = await pool.getConnection();
     try {
-        connection = await oracledb.getConnection();
-        const result = await connection.execute(
-            `INSERT INTO Events (Event_id, Event_Name, Event_type, Date, Venue_id) VALUES (:1, :2, :3, :4, :5)`,
-            [event.Event_id, event.Event_Name, event.Event_type, event.Date, event.Venue_id],
-            { autoCommit: true }
-        );
+        const [result] = await connection.execute(`
+            INSERT INTO Events (Event_Name, Event_Type, Date, Client_Id)
+            VALUES (?, ?, ?, ?)`, 
+            [event.Event_Name, event.Event_Type, event.Date, event.Client_Id]);
         return result;
     } finally {
-        if (connection) await connection.close();
+        connection.release();
     }
 }
 
-async function updateEvent(id, event) {
-    let connection;
+async function updateEventById(id, event) {
+    const pool = getPool();
+    const connection = await pool.getConnection();
     try {
-        connection = await oracledb.getConnection();
-        const result = await connection.execute(
-            `UPDATE Events SET Event_Name = :1, Event_type = :2, Date = :3, Venue_id = :4 WHERE Event_id = :5`,
-            [event.Event_Name, event.Event_type, event.Date, event.Venue_id, id],
-            { autoCommit: true }
-        );
+        const [result] = await connection.execute(`
+            UPDATE Events e
+            SET e.Event_Name = ?, e.Event_Type = ?, e.Date = ?
+            WHERE e.Event_Id = ?`, 
+            [event.Event_Name, event.Event_Type, event.Date, id]);
         return result;
     } finally {
-        if (connection) await connection.close();
+        connection.release();
     }
 }
 
-async function deleteEvent(id) {
-    let connection;
+async function deleteEventById(id) {
+    const pool = getPool();
+    const connection = await pool.getConnection();
     try {
-        connection = await oracledb.getConnection();
-        const result = await connection.execute(
-            `DELETE FROM Events WHERE Event_id = :1`,
-            [id],
-            { autoCommit: true }
-        );
+        const [result] = await connection.execute(`
+            DELETE FROM Events WHERE Event_Id = ?`, [id]);
         return result;
     } finally {
-        if (connection) await connection.close();
+        connection.release();
     }
 }
 
-module.exports = { getAllEvents, createEvent, updateEvent, deleteEvent };
+module.exports = { getAllEvents, getEventById, getEventByName, createEvent, updateEventById, deleteEventById };
