@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const { createPool, initializeDatabase, registerUser, pool } = require('./db');
+const eventController = require('./controllers/eventController');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -112,6 +113,10 @@ async function startServer() {
                 res.status(500).json({ message: 'An error occurred during login' });
             }
         });
+
+        app.get('/api/events', eventController.getAllEvents);
+        app.post('/api/events', eventController.createEvent);
+        app.put('/api/events/:id/status', eventController.updateEventStatus);
 
         app.listen(port, () => {
             console.log(`Server is running on port ${port}`);

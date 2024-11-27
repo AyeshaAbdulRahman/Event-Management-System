@@ -18,8 +18,8 @@
                     <i class="fas fa-bars"></i>
                 </button>
                 <ul class="nav-links">
-                    <li><a href="#dashboard">Dashboard</a></li>
-                    <li><a href="#events">Events</a></li>
+                    <li><a href="#" onclick="redirectToDashboard(event)">Dashboard</a></li>
+                    <li><a href="events.html">Events</a></li>
                     <li><a href="#requests">Requests</a></li>
                     <li><a href="#vendors">Vendors</a></li>
                     <li><a href="login.html">Logout</a></li>
@@ -73,6 +73,17 @@
                 dashboardContainer.classList.remove('shift-left');
             }
         });
+
+        // Add this function to handle dashboard redirection
+        function redirectToDashboard(event) {
+            event.preventDefault();
+            const userRole = localStorage.getItem('userRole');
+            if (userRole === 'client') {
+                window.location.href = 'customer-dashboard.html';
+            } else if (userRole === 'employee') {
+                window.location.href = 'employee-dashboard.html';
+            }
+        }
     </script>
 </body>
 </html> 

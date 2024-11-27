@@ -53,6 +53,9 @@
                 const data = await response.json();
 
                 if (response.ok) {
+                    // Store user role in localStorage
+                    localStorage.setItem('userRole', data.role);
+                    
                     // Redirect based on role
                     if (data.role === 'client') {
                         window.location.href = 'customer-dashboard.html';
