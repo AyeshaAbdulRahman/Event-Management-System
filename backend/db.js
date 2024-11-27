@@ -32,6 +32,7 @@ async function initializeDatabase() {
         
         const connection = await pool.getConnection();
         try {
+            // Create users table
             await connection.execute(`
                 CREATE TABLE IF NOT EXISTS users (
                     User_Id INT AUTO_INCREMENT PRIMARY KEY,
@@ -42,6 +43,35 @@ async function initializeDatabase() {
                     Password VARCHAR(20) NOT NULL
                 )
             `);
+
+            // Create clients table
+            await connection.execute(`
+                CREATE TABLE IF NOT EXISTS clients (
+                    Client_Id INT AUTO_INCREMENT PRIMARY KEY,
+                    User_Id INT,
+                    FOREIGN KEY (User_Id) REFERENCES users(User_Id)
+                )
+            `);
+
+            // Create teams table (if it doesn't exist already)
+            await connection.execute(`
+                CREATE TABLE IF NOT EXISTS teams (
+                    Team_Id INT AUTO_INCREMENT PRIMARY KEY,
+                    Team_Name VARCHAR(100) NOT NULL
+                )
+            `);
+
+            // Create employees table
+            await connection.execute(`
+                CREATE TABLE IF NOT EXISTS employees (
+                    Employee_Id INT AUTO_INCREMENT PRIMARY KEY,
+                    User_Id INT,
+                    Team_Id INT,
+                    FOREIGN KEY (User_Id) REFERENCES users(User_Id),
+                    FOREIGN KEY (Team_Id) REFERENCES teams(Team_Id)
+                )
+            `);
+
             console.log('Database initialized successfully');
         } finally {
             connection.release();
@@ -59,13 +89,39 @@ async function registerUser(firstName, lastName, email, role, password) {
 
     const connection = await pool.getConnection();
     try {
-        // Store password directly without hashing
-        const [result] = await connection.execute(
+        await connection.beginTransaction();
+
+        // Insert into users table
+        const [userResult] = await connection.execute(
             'INSERT INTO users (First_Name, Last_Name, Email, Role, Password) VALUES (?, ?, ?, ?, ?)',
             [firstName, lastName, email, role, password]
         );
-        return { success: true, userId: result.insertId };
+        const userId = userResult.insertId;
+
+        // Based on role, insert into respective table
+        if (role === 'client') {
+            await connection.execute(
+                'INSERT INTO clients (User_Id) VALUES (?)',
+                [userId]
+            );
+        } else if (role === 'employee') {
+            // Get a random team_id from teams table
+            const [teams] = await connection.execute('SELECT Team_Id FROM teams');
+            if (teams.length === 0) {
+                throw new Error('No teams available for employee assignment');
+            }
+            const randomTeam = teams[Math.floor(Math.random() * teams.length)];
+            
+            await connection.execute(
+                'INSERT INTO employees (User_Id, Team_Id) VALUES (?, ?)',
+                [userId, randomTeam.Team_Id]
+            );
+        }
+
+        await connection.commit();
+        return { success: true, userId };
     } catch (error) {
+        await connection.rollback();
         if (error.code === 'ER_DUP_ENTRY') {
             throw new Error('Email already exists');
         }
