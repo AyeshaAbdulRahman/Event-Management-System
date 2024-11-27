@@ -3,6 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 const { createPool, initializeDatabase, registerUser, pool } = require('./db');
 const eventController = require('./controllers/eventController');
+const venueController = require('./controllers/venueController');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -87,6 +88,7 @@ async function startServer() {
 
                 const connection = await dbPool.getConnection();
                 try {
+                    // First get the user details
                     const [users] = await connection.execute(
                         'SELECT User_Id, First_Name, Last_Name, Email, Role FROM users WHERE Email = ? AND Password = ?',
                         [email, password]
@@ -97,9 +99,23 @@ async function startServer() {
                     }
 
                     const user = users[0];
+
+                    // If user is a client, get their Client_Id
+                    let clientId = null;
+                    if (user.Role === 'client') {
+                        const [clients] = await connection.execute(
+                            'SELECT Client_Id FROM clients WHERE User_Id = ?',
+                            [user.User_Id]
+                        );
+                        if (clients.length > 0) {
+                            clientId = clients[0].Client_Id;
+                        }
+                    }
+
                     res.json({
                         message: 'Login successful',
                         userId: user.User_Id,
+                        clientId: clientId,
                         firstName: user.First_Name,
                         lastName: user.Last_Name,
                         email: user.Email,
@@ -118,6 +134,7 @@ async function startServer() {
         app.post('/api/events', eventController.createEvent);
         app.put('/api/events/:id/status', eventController.updateEventStatus);
         app.post('/api/events/create', eventController.createNewEvent);
+        app.get('/api/venues', venueController.getAllVenues);
 
         app.listen(port, () => {
             console.log(`Server is running on port ${port}`);

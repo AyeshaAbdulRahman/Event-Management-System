@@ -47,11 +47,11 @@ async function createNewEvent(req, res) {
 
         const connection = await pool.getConnection();
         try {
-            const { eventName, eventType, eventDate } = req.body;
+            const { eventName, eventType, eventDate, venueId, clientId } = req.body;
             
             const [result] = await connection.execute(
-                'INSERT INTO events (Event_Name, Event_Type, Date) VALUES (?, ?, ?)',
-                [eventName, eventType, eventDate]
+                'INSERT INTO events (Event_Name, Event_Type, Date, Client_Id, Venue_Id) VALUES (?, ?, ?, ?, ?)',
+                [eventName, eventType, eventDate, clientId, venueId]
             );
 
             res.status(201).json({ 

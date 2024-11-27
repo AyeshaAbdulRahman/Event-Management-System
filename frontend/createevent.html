@@ -58,13 +58,81 @@
                     <input type="date" id="eventDate" name="eventDate" required>
                 </div>
 
+                <div class="form-group">
+                    <label for="venue">Venue</label>
+                    <select id="venue" name="venue" required>
+                        <option value="">Select Venue</option>
+                        <!-- Venues will be loaded here -->
+                    </select>
+                </div>
+
                 <button type="submit" class="submit-btn">Create Event</button>
             </form>
         </div>
     </div>
 
     <script>
-        // Navigation functions
+        // Load venues when page loads
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('http://localhost:5000/api/venues');
+                const venues = await response.json();
+                
+                const venueSelect = document.getElementById('venue');
+                venues.forEach(venue => {
+                    const option = document.createElement('option');
+                    option.value = venue.Venue_Id;
+                    option.textContent = `${venue.Venue_Name}, ${venue.Venue_City}`;
+                    venueSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading venues:', error);
+            }
+        });
+
+        // Form submission
+        document.getElementById('createEventForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const clientId = localStorage.getItem('clientId');
+            if (!clientId) {
+                alert('Please log in as a client to create an event');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const formData = {
+                eventName: document.getElementById('eventName').value,
+                eventType: document.getElementById('eventType').value,
+                eventDate: document.getElementById('eventDate').value,
+                venueId: document.getElementById('venue').value,
+                clientId: parseInt(clientId)
+            };
+
+            try {
+                const response = await fetch('http://localhost:5000/api/events/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Event created successfully!');
+                    window.location.href = 'events.html';
+                } else {
+                    alert(data.message || 'Failed to create event');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while creating the event');
+            }
+        });
+
+        // Navigation functions (same as before)
         function toggleMenu() {
             const navLinks = document.querySelector('.nav-links');
             const dashboardContainer = document.querySelector('.dashboard-container');
@@ -91,39 +159,6 @@
                 window.location.href = 'employee-dashboard.html';
             }
         }
-
-        // Form submission
-        document.getElementById('createEventForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = {
-                eventName: document.getElementById('eventName').value,
-                eventType: document.getElementById('eventType').value,
-                eventDate: document.getElementById('eventDate').value
-            };
-
-            try {
-                const response = await fetch('http://localhost:5000/api/events/create', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    alert('Event created successfully!');
-                    window.location.href = 'events.html';
-                } else {
-                    alert(data.message || 'Failed to create event');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred while creating the event');
-            }
-        });
     </script>
 </body>
 </html> 
