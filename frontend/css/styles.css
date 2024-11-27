@@ -45,15 +45,29 @@ body {
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.navbar .logo {
+.navbar .INo {
   display: flex;
   align-items: center;
 }
 
 .logo-image {
-  height: 40px;  /* Adjust this value based on your logo size */
+  
   width: auto;
   object-fit: contain;
+  position: absolute;
+  left: 30px;  
+  height: 70px; 
+}
+.image-cen{
+    width: 100%;
+}
+.heading{
+
+    width: 100%;
+  font-size: 40px;
+  padding: 10px;
+  font-weight: bold;
+  color: #3b306c;
 }
 
 .navbar .nav-links {
@@ -189,8 +203,7 @@ body {
     color: white;
 }
 footer {
-  background-color: black;
-  color: white;
+  background-color: white;
   padding: 20px;
   text-align: center;
 }
@@ -201,6 +214,7 @@ footer {
 
 .social-links {
   margin-top: 10px;
+  color: #3b306c;
 }
 
 .social-icon {
@@ -208,6 +222,7 @@ footer {
   color: white;
   margin: 0 10px;
   font-size: 18px;
+  color: #3b306c;
 }
 
 .social-icon:hover {
@@ -539,23 +554,23 @@ footer {
 }
 
 .register-container {
-    height: 100vh;
+    height: 80vh;
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    background-color: #fff5f5;
+    background-color: #3B306c;
     padding: 20px;
-    overflow-y: auto;
 }
 
 .register-form {
     background-color: white;
-    padding: 30px;
+    padding: 25px;
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 400px;
-    margin-top: 20px;
+    max-width: 500px;
+    margin-top: 5px;
+    height: 100%;
 }
 
 .register-form h2 {
@@ -660,11 +675,11 @@ footer {
 }
 
 .login-container {
-    height: 100vh;
+    height: 80vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #fff5f5;
+    background-color: #3B306C;
 }
 
 .login-form {
@@ -869,19 +884,19 @@ h1 {
 }
 
 /* Footer */
-footer {
+/*footer {
     background-color: var(--primary);
     color: var(--secondary);
     padding: 2rem;
     text-align: center;
-}
+}*/
 
 .social-links {
     margin-top: 1rem;
 }
 
 .social-icon {
-    color: var(--secondary);
+    color: #3b306c;
     font-size: 1.5rem;
     margin: 0 1rem;
     transition: color 0.3s;
@@ -993,4 +1008,10 @@ h1, h2, h3, p, .navbar .logo, .team-member h3, .footer-content p {
     height: 50px;  /* Slightly larger in footer */
     width: auto;
     object-fit: contain;
+}
+
+/*dashboard_container*/
+
+.dashboard-container{
+    height: 73%;
 }
