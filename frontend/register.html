@@ -10,39 +10,43 @@
 <body style="background-color: #3b306c;">
     <header>
         <nav class="navbar">
-                    <img src="./img/logo.png" alt="Logo" class="logo-image image-cen">
-                    <h1 class="heading">            </h1>
-            
+            <img src="./img/logo.png" alt="Logo" class="logo-image image-cen">
+            <h1 class="heading">            </h1>
         </nav>
     </header>
 
     <div class="register-container">
-        <form class="register-form">
+        <form class="register-form" id="registerForm">
             <h2 style="color: #3b306c;">Register</h2>
             <div class="form-group">
-                <label for="name">Full Name</label>
-                <input type="text" id="name" required>
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" required maxlength="20">
+            </div>
+            <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" required maxlength="20">
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" required>
             </div>
             <div class="form-group">
+                <label for="role">Select Role</label>
+                <select id="role" class="role-select" required>
+                    <option value="customer">Customer</option>
+                    <option value="vendor">Vendor</option>
+                    <option value="employee">Employee</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" required>
+                <input type="password" id="password" required maxlength="20">
                 <div class="password-requirements">
                     <p>Password must contain:</p>
                     <ul>
-                        <li>At least 8 characters</li>
-                        <li>One uppercase letter</li>
-                        <li>One number</li>
-                        <li>One special character</li>
+                        <li>Maximum 20 characters</li>
                     </ul>
                 </div>
-            </div>
-            <div class="form-group">
-                <label for="confirm-password">Confirm Password</label>
-                <input type="password" id="confirm-password" required>
             </div>
             <button type="submit" class="register-btn">Register</button>
             <div class="login-link">
@@ -50,6 +54,7 @@
             </div>
         </form>
     </div>
+
     <footer>
         <div class="footer-content">
             <div class="social-links">
@@ -59,5 +64,41 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                role: document.getElementById('role').value,
+                password: document.getElementById('password').value
+            };
+
+            try {
+                const response = await fetch('http://localhost:5000/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Registration successful!');
+                    window.location.href = 'login.html';
+                } else {
+                    alert(data.message || 'Registration failed');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred during registration');
+            }
+        });
+    </script>
 </body>
 </html> 
