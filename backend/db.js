@@ -3,7 +3,7 @@ const mysql = require('mysql2/promise');
 let pool;
 
 async function createPool() {
-    try {
+    if (!pool) {
         pool = mysql.createPool({
             host: process.env.MYSQL_HOST,
             user: process.env.MYSQL_USER,
@@ -13,17 +13,16 @@ async function createPool() {
             connectionLimit: 10,
             queueLimit: 0
         });
-
-        // Test the connection
-        const connection = await pool.getConnection();
-        console.log('Database connection established successfully');
-        connection.release();
-        return pool;
-    } catch (error) {
-        console.error('Error creating database pool:', error);
-        throw error;
     }
+    return pool;
 }
+
+// Initialize pool immediately
+createPool().then(() => {
+    console.log('Database pool created successfully');
+}).catch(err => {
+    console.error('Failed to create database pool:', err);
+});
 
 async function initializeDatabase() {
     try {
@@ -79,6 +78,8 @@ async function registerUser(firstName, lastName, email, role, password) {
 module.exports = {
     createPool,
     initializeDatabase,
-    registerUser
+    registerUser,
+    pool,
+    getPool: () => pool
 };
 

@@ -1,4 +1,5 @@
 const Event = require('../models/Event');
+const db = require('../db');
 
 async function getAllEvents(req, res) {
     try {
@@ -37,8 +38,38 @@ async function updateEventStatus(req, res) {
     }
 }
 
+async function createNewEvent(req, res) {
+    try {
+        const pool = db.getPool();
+        if (!pool) {
+            throw new Error('Database pool not initialized');
+        }
+
+        const connection = await pool.getConnection();
+        try {
+            const { eventName, eventType, eventDate } = req.body;
+            
+            const [result] = await connection.execute(
+                'INSERT INTO events (Event_Name, Event_Type, Date) VALUES (?, ?, ?)',
+                [eventName, eventType, eventDate]
+            );
+
+            res.status(201).json({ 
+                message: 'Event created successfully', 
+                eventId: result.insertId 
+            });
+        } finally {
+            connection.release();
+        }
+    } catch (error) {
+        console.error('Error creating event:', error);
+        res.status(500).json({ message: 'Error creating event' });
+    }
+}
+
 module.exports = {
     getAllEvents,
     createEvent,
-    updateEventStatus
+    updateEventStatus,
+    createNewEvent
 }; 

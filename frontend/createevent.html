@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Event - Taqreeb</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body style="background-color: #3b306c; color: white;">
+    <header>
+        <nav class="navbar">
+            <div class="nav-left">
+                <img src="./img/logo.png" alt="Logo" class="logo-image" style="height: 40px;">
+            </div>
+            <div class="nav-right">
+                <button class="hamburger" onclick="toggleMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <ul class="nav-links">
+                    <div class="nav-links-main">
+                        <li><a href="#" onclick="redirectToDashboard(event)">Dashboard</a></li>
+                        <li><a href="#bookings">My Bookings</a></li>
+                        <li><a href="events.html">Events</a></li>
+                        <li><a href="#vendors">Vendors</a></li>
+                    </div>
+                    <div class="nav-links-bottom">
+                        <li><a href="#profile">Profile</a></li>
+                        <li><a href="login.html">Logout</a></li>
+                    </div>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <div class="dashboard-container">
+        <div class="create-event-container">
+            <h2 class="section-title">Create New Event</h2>
+            <form id="createEventForm" class="event-form">
+                <div class="form-group">
+                    <label for="eventName">Event Name</label>
+                    <input type="text" id="eventName" name="eventName" required maxlength="50">
+                </div>
+                
+                <div class="form-group">
+                    <label for="eventType">Event Type</label>
+                    <select id="eventType" name="eventType" required>
+                        <option value="">Select Event Type</option>
+                        <option value="concert">Concert</option>
+                        <option value="festival">Festival</option>
+                        <option value="qawali">Qawali</option>
+                        <option value="formal">Formal</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="eventDate">Event Date</label>
+                    <input type="date" id="eventDate" name="eventDate" required>
+                </div>
+
+                <button type="submit" class="submit-btn">Create Event</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Navigation functions
+        function toggleMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            const dashboardContainer = document.querySelector('.dashboard-container');
+            navLinks.classList.toggle('show');
+            dashboardContainer.classList.toggle('shift-left');
+            event.stopPropagation();
+        }
+
+        document.addEventListener('click', function(event) {
+            const navLinks = document.querySelector('.nav-links');
+            const dashboardContainer = document.querySelector('.dashboard-container');
+            if (!event.target.closest('.nav-right') && navLinks.classList.contains('show')) {
+                navLinks.classList.remove('show');
+                dashboardContainer.classList.remove('shift-left');
+            }
+        });
+
+        function redirectToDashboard(event) {
+            event.preventDefault();
+            const userRole = localStorage.getItem('userRole');
+            if (userRole === 'client') {
+                window.location.href = 'customer-dashboard.html';
+            } else if (userRole === 'employee') {
+                window.location.href = 'employee-dashboard.html';
+            }
+        }
+
+        // Form submission
+        document.getElementById('createEventForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                eventName: document.getElementById('eventName').value,
+                eventType: document.getElementById('eventType').value,
+                eventDate: document.getElementById('eventDate').value
+            };
+
+            try {
+                const response = await fetch('http://localhost:5000/api/events/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Event created successfully!');
+                    window.location.href = 'events.html';
+                } else {
+                    alert(data.message || 'Failed to create event');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while creating the event');
+            }
+        });
+    </script>
+</body>
+</html> 

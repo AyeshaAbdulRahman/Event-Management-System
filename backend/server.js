@@ -117,6 +117,7 @@ async function startServer() {
         app.get('/api/events', eventController.getAllEvents);
         app.post('/api/events', eventController.createEvent);
         app.put('/api/events/:id/status', eventController.updateEventStatus);
+        app.post('/api/events/create', eventController.createNewEvent);
 
         app.listen(port, () => {
             console.log(`Server is running on port ${port}`);
