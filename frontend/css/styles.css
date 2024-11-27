@@ -43,6 +43,13 @@ body {
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  min-height: 56px;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  height: 100%;
 }
 
 .navbar .INo {
@@ -54,20 +61,9 @@ body {
   height: 40px;
   width: auto;
   object-fit: contain;
-  position: absolute;
-  left: 30px;  
-  height: 70px; 
-}
-.image-cen{
-    width: 100%;
-}
-.heading{
-
-    width: 100%;
-  font-size: 40px;
-  padding: 10px;
-  font-weight: bold;
-  color: #3b306c;
+  margin: 0;
+  padding: 0;
+  position: static;
 }
 
 .navbar .nav-links {
