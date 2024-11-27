@@ -1225,3 +1225,34 @@ header {
 .dashboard-container.shift-left {
     margin-right: 250px;
 }
+
+/* Event page specific styles */
+.request-event-btn {
+    background-color: #13b874;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 2rem;
+    display: block;
+    margin-left: auto;  /* Center the button */
+    margin-right: auto;
+}
+
+.request-event-btn:hover {
+    background-color: #0f9660;
+}
+
+.events-container {
+    text-align: center;
+    padding: 1rem;
+}
+
+.section-title {
+    color: white;
+    margin-bottom: 2rem;
+    font-size: 24px;
+}
