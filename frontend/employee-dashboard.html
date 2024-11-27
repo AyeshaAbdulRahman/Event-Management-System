@@ -14,6 +14,9 @@
                 <img src="./img/logo.png" alt="Logo" class="logo-image" style="height: 40px;">
             </div>
             <div class="nav-right">
+                <button class="hamburger" onclick="toggleMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <ul class="nav-links">
                     <li><a href="#dashboard">Dashboard</a></li>
                     <li><a href="#events">Events</a></li>
@@ -46,5 +49,30 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function toggleMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            const dashboardContainer = document.querySelector('.dashboard-container');
+            
+            navLinks.classList.toggle('show');
+            dashboardContainer.classList.toggle('shift-left');
+            
+            // Stop event propagation
+            event.stopPropagation();
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const navLinks = document.querySelector('.nav-links');
+            const dashboardContainer = document.querySelector('.dashboard-container');
+            const hamburger = document.querySelector('.hamburger');
+            
+            if (!event.target.closest('.nav-right') && navLinks.classList.contains('show')) {
+                navLinks.classList.remove('show');
+                dashboardContainer.classList.remove('shift-left');
+            }
+        });
+    </script>
 </body>
 </html> 

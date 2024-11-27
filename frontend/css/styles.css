@@ -1011,3 +1011,99 @@ h1, h2, h3, p, .navbar .logo, .team-member h3, .footer-content p {
 .dashboard-container{
     height: 73%;
 }
+
+/* Hamburger menu button */
+.hamburger {
+    display: block;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #3b306c;
+    cursor: pointer;
+    padding: 8px;
+    z-index: 1000;
+    transition: color 0.3s ease;
+}
+
+.hamburger:hover {
+    color: #13b874;
+}
+
+/* Navigation menu */
+.nav-right {
+    position: relative;
+}
+
+.nav-links {
+    display: none;
+    position: fixed;
+    top: 56px;
+    right: -250px;
+    background-color: white;
+    padding: 1rem;
+    width: 250px;
+    height: calc(100vh - 56px);
+    z-index: 999;
+    flex-direction: column;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+    transition: right 0.3s ease-in-out;
+}
+
+.nav-links.show {
+    display: flex;
+    right: 0;
+}
+
+/* Dashboard container transition */
+.dashboard-container {
+    transition: margin-right 0.3s ease-in-out;
+    height: calc(100vh - 56px);
+    overflow-y: auto;
+}
+
+.dashboard-container.shift-left {
+    margin-right: 250px; /* Same as nav-links width */
+}
+
+/* Ensure the cards layout adjusts properly */
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+    padding: 0 1rem;
+}
+
+/* Make sure body doesn't scroll when nav is open */
+body {
+    overflow-x: hidden;
+}
+
+/* Adjust hamburger position */
+.hamburger {
+    margin-right: 10px;
+    z-index: 1000;
+}
+
+/* Add transition to all interactive elements */
+.nav-links li a {
+    display: block;
+    padding: 15px 20px;
+    color: #3b306c;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    width: 100%;
+    text-align: left;
+    font-size: 16px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.nav-links li:last-child a {
+    border-bottom: none;
+}
+
+.nav-links li a:hover {
+    background-color: #f8f9fa;
+    color: #13b874;
+    padding-left: 25px; /* Slight indent on hover */
+}
