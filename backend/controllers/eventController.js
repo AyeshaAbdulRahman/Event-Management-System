@@ -1,10 +1,17 @@
 const Event = require('../models/Event');
-const db = require('../db');
+const { pool } = require('../db');
 
 async function getAllEvents(req, res) {
     try {
-        const events = await Event.getAllEvents();
-        res.json(events);
+        const connection = await pool.getConnection();
+        try {
+            const [events] = await connection.execute(
+                'SELECT Event_Id, Event_Name, Event_Type, Date, Client_Id, Venue_Id FROM events ORDER BY Date DESC'
+            );
+            res.json(events);
+        } finally {
+            connection.release();
+        }
     } catch (error) {
         console.error('Error fetching events:', error);
         res.status(500).json({ message: 'Error fetching events' });
@@ -40,11 +47,6 @@ async function updateEventStatus(req, res) {
 
 async function createNewEvent(req, res) {
     try {
-        const pool = db.getPool();
-        if (!pool) {
-            throw new Error('Database pool not initialized');
-        }
-
         const connection = await pool.getConnection();
         try {
             const { eventName, eventType, eventDate, venueId, clientId } = req.body;

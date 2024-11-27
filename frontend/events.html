@@ -114,11 +114,14 @@
                     const eventsGrid = document.getElementById('eventsGrid');
                     eventsGrid.innerHTML = events.map(event => `
                         <div class="event-card">
-                            <h3>${event.title}</h3>
-                            <p class="event-date">${new Date(event.date).toLocaleDateString()}</p>
-                            <p class="event-type">${event.type}</p>
-                            <p class="event-description">${event.description}</p>
-                            <p class="event-status">Status: ${event.status}</p>
+                            <h3>${event.Event_Name}</h3>
+                            <p class="event-date">${new Date(event.Date).toLocaleDateString()}</p>
+                            <p class="event-type">Type: ${event.Event_Type}</p>
+                            <div class="event-details">
+                                <p>Event ID: ${event.Event_Id}</p>
+                                <p>Venue ID: ${event.Venue_Id}</p>
+                                <p>Client ID: ${event.Client_Id}</p>
+                            </div>
                         </div>
                     `).join('');
                 })
