@@ -1040,18 +1040,43 @@ h1, h2, h3, p, .navbar .logo, .team-member h3, .footer-content p {
     top: 56px;
     right: -250px;
     background-color: white;
-    padding: 1rem;
+    padding: 20px 0;
     width: 250px;
     height: calc(100vh - 56px);
     z-index: 999;
     flex-direction: column;
     box-shadow: -2px 0 5px rgba(0,0,0,0.1);
     transition: right 0.3s ease-in-out;
+    justify-content: space-between;
+}
+
+.nav-links-main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 20px 0;
+}
+
+.nav-links-bottom {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid #f0f0f0;
+    margin-top: auto;
+    padding: 20px 0;
 }
 
 .nav-links.show {
     display: flex;
-    right: 0;
+}
+
+/* Style adjustments for bottom items */
+.nav-links-bottom li a {
+    color: #3b306c;
+    padding: 15px 20px;
+}
+
+.nav-links-bottom li:last-child a {
+    color: #ff4444; /* Make logout red */
 }
 
 /* Dashboard container transition */
@@ -1088,7 +1113,7 @@ body {
 /* Add transition to all interactive elements */
 .nav-links li a {
     display: block;
-    padding: 15px 20px;
+    padding: 20px 25px;
     color: #3b306c;
     text-decoration: none;
     transition: all 0.3s ease;
@@ -1096,6 +1121,7 @@ body {
     text-align: left;
     font-size: 16px;
     border-bottom: 1px solid #f0f0f0;
+    margin: 5px 0;
 }
 
 .nav-links li:last-child a {
@@ -1106,4 +1132,96 @@ body {
     background-color: #f8f9fa;
     color: #13b874;
     padding-left: 25px; /* Slight indent on hover */
+}
+
+/* Header and navbar container */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: white;
+}
+
+/* Navigation menu */
+.nav-links {
+    display: none;
+    position: fixed;
+    top: 56px;
+    right: -250px;
+    background-color: white;
+    padding: 20px 0;
+    width: 250px;
+    height: calc(100vh - 56px);
+    z-index: 999;
+    flex-direction: column;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+    transition: right 0.3s ease-in-out;
+    justify-content: space-between;
+}
+
+.nav-links.show {
+    right: 0;
+    display: flex;
+}
+
+/* Main and bottom navigation sections */
+.nav-links-main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 20px 0;
+}
+
+.nav-links-bottom {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid #f0f0f0;
+    margin-top: auto;
+    padding: 20px 0;
+}
+
+/* Navigation items styling */
+.nav-links li a {
+    display: block;
+    padding: 20px 25px;
+    color: #3b306c;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    width: 100%;
+    text-align: left;
+    font-size: 16px;
+    border-bottom: 1px solid #f0f0f0;
+    margin: 5px 0;
+}
+
+.nav-links li a:hover {
+    background-color: #f8f9fa;
+    color: #13b874;
+    padding-left: 25px;
+}
+
+/* Hamburger button */
+.hamburger {
+    display: block;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #3b306c;
+    cursor: pointer;
+    padding: 8px;
+    z-index: 1001;
+}
+
+/* Dashboard container adjustments */
+.dashboard-container {
+    margin-top: 56px;
+    transition: margin-right 0.3s ease-in-out;
+    height: calc(100vh - 56px);
+    overflow-y: auto;
+}
+
+.dashboard-container.shift-left {
+    margin-right: 250px;
 }
