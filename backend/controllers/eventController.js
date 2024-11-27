@@ -5,9 +5,21 @@ async function getAllEvents(req, res) {
     try {
         const connection = await pool.getConnection();
         try {
-            const [events] = await connection.execute(
-                'SELECT Event_Id, Event_Name, Event_Type, Date, Client_Id, Venue_Id FROM events ORDER BY Date DESC'
-            );
+            const [events] = await connection.execute(`
+                SELECT 
+                    e.Event_Name,
+                    e.Event_Type,
+                    e.Date,
+                    v.Venue_Name,
+                    v.City,
+                    u.First_Name,
+                    u.Last_Name
+                FROM events e
+                JOIN venues v ON e.Venue_Id = v.Venue_Id
+                JOIN clients c ON e.Client_Id = c.Client_Id
+                JOIN users u ON c.User_Id = u.User_Id
+                ORDER BY e.Date DESC
+            `);
             res.json(events);
         } finally {
             connection.release();

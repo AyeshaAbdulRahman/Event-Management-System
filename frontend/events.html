@@ -118,9 +118,8 @@
                             <p class="event-date">${new Date(event.Date).toLocaleDateString()}</p>
                             <p class="event-type">Type: ${event.Event_Type}</p>
                             <div class="event-details">
-                                <p>Event ID: ${event.Event_Id}</p>
-                                <p>Venue ID: ${event.Venue_Id}</p>
-                                <p>Client ID: ${event.Client_Id}</p>
+                                <p class="venue-info">Venue: ${event.Venue_Name}, ${event.City}</p>
+                                <p class="organizer-info">Organizer: ${event.First_Name} ${event.Last_Name}</p>
                             </div>
                         </div>
                     `).join('');
