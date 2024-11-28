@@ -36,7 +36,7 @@
     <div class="dashboard-container">
         <div class="profile-container">
             <div class="profile-card" id="profileDetails">
-                <div class="edit-icon">
+                <div class="edit-icon" onclick="window.location.href='editprofile.html'">
                     <i class="fas fa-edit"></i>
                 </div>
                 <!-- Profile details will be loaded here -->
@@ -59,7 +59,7 @@
                 
                 const profileDetails = document.getElementById('profileDetails');
                 profileDetails.innerHTML = `
-                    <div class="edit-icon">
+                    <div class="edit-icon" onclick="window.location.href='editprofile.html'">
                         <i class="fas fa-edit"></i>
                     </div>
                     <div class="profile-header">

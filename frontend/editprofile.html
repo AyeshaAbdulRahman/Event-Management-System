@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - Taqreeb</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body style="background-color: #3b306c; color: white;">
+    <header>
+        <nav class="navbar">
+            <div class="nav-left">
+                <img src="./img/logo.png" alt="Logo" class="logo-image" style="height: 40px;">
+            </div>
+            <div class="nav-right">
+                <button class="hamburger" onclick="toggleMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <ul class="nav-links">
+                    <div class="nav-links-main">
+                        <li><a href="#" onclick="redirectToDashboard(event)">Dashboard</a></li>
+                        <li><a href="my_bookings.html">My Bookings</a></li>
+                        <li><a href="events.html">Events</a></li>
+                        <li><a href="#vendors">Vendors</a></li>
+                    </div>
+                    <div class="nav-links-bottom">
+                        <li><a href="profiles.html">Profile</a></li>
+                        <li><a href="login.html">Logout</a></li>
+                    </div>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <div class="dashboard-container">
+        <div class="profile-container">
+            <div class="profile-card">
+                <h2 class="edit-profile-title">Edit Profile</h2>
+                <form id="editProfileForm" class="edit-profile-form">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" name="firstName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" name="lastName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="oldPassword">Enter Old Password</label>
+                        <input type="password" id="oldPassword" name="oldPassword" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" id="newPassword" name="newPassword">
+                        <small class="password-hint">Leave blank if you don't want to change password</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword">
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="save-btn">Save Changes</button>
+                        <button type="button" class="cancel-btn" onclick="window.location.href='profiles.html'">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load current user data
+        document.addEventListener('DOMContentLoaded', async () => {
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                alert('Please log in to edit your profile');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/profile/${userId}`);
+                const profile = await response.json();
+                
+                // Pre-fill all fields
+                document.getElementById('firstName').value = profile.First_Name;
+                document.getElementById('lastName').value = profile.Last_Name;
+                document.getElementById('email').value = profile.Email;
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                alert('Failed to load profile');
+            }
+        });
+
+        // Handle form submission
+        document.getElementById('editProfileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Validate passwords match if new password is being set
+            if (newPassword && newPassword !== confirmPassword) {
+                alert('New passwords do not match');
+                return;
+            }
+
+            const formData = {
+                userId: localStorage.getItem('userId'),
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                oldPassword: document.getElementById('oldPassword').value,
+                newPassword: newPassword || undefined
+            };
+
+            try {
+                const response = await fetch('http://localhost:5000/api/profile/update', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Profile updated successfully!');
+                    window.location.href = 'profiles.html';
+                } else {
+                    alert(data.message || 'Failed to update profile');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while updating profile');
+            }
+        });
+
+        // Navigation functions
+        function toggleMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            const dashboardContainer = document.querySelector('.dashboard-container');
+            navLinks.classList.toggle('show');
+            dashboardContainer.classList.toggle('shift-left');
+            event.stopPropagation();
+        }
+
+        document.addEventListener('click', function(event) {
+            const navLinks = document.querySelector('.nav-links');
+            const dashboardContainer = document.querySelector('.dashboard-container');
+            if (!event.target.closest('.nav-right') && navLinks.classList.contains('show')) {
+                navLinks.classList.remove('show');
+                dashboardContainer.classList.remove('shift-left');
+            }
+        });
+
+        function redirectToDashboard(event) {
+            event.preventDefault();
+            const userRole = localStorage.getItem('userRole');
+            if (userRole === 'client') {
+                window.location.href = 'customer-dashboard.html';
+            } else if (userRole === 'employee') {
+                window.location.href = 'employee-dashboard.html';
+            }
+        }
+    </script>
+</body>
+</html> 
