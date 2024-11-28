@@ -120,7 +120,6 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    alert('Event created successfully!');
                     window.location.href = 'events.html';
                 } else {
                     alert(data.message || 'Failed to create event');
