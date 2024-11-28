@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Dashboard - Taqreeb</title>
+    <title>Profile - Taqreeb</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="./css/styles.css">
 </head>
@@ -33,53 +33,79 @@
         </nav>
     </header>
 
-    <div class="dashboard-container" style="padding: 2rem;">  
-        <div class="dashboard-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
-            <div class="dashboard-card" style="background: white; padding: 2rem; border-radius: 10px; color: #3b306c;">
-                <h3>Pending Events</h3>
-                <p>5 events need attention</p>
-                <button class="cta-button">View Events</button>
-            </div>
-
-            <div class="dashboard-card" style="background: white; padding: 2rem; border-radius: 10px; color: #3b306c;">
-                <h3>Customer Requests</h3>
-                <p>3 new requests</p>
-                <button class="cta-button">Handle Requests</button>
-            </div>
-
-            <div class="dashboard-card" style="background: white; padding: 2rem; border-radius: 10px; color: #3b306c;">
-                <h3>Vendor Management</h3>
-                <p>2 vendors awaiting approval</p>
-                <button class="cta-button">Manage Vendors</button>
+    <div class="dashboard-container">
+        <div class="profile-container">
+            <h2 class="section-title">My Profile</h2>
+            <div class="profile-card" id="profileDetails">
+                <!-- Profile details will be loaded here -->
             </div>
         </div>
     </div>
 
     <script>
+        // Load user's profile
+        document.addEventListener('DOMContentLoaded', async () => {
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                alert('Please log in to view your profile');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/profile/${userId}`);
+                const profile = await response.json();
+                
+                const profileDetails = document.getElementById('profileDetails');
+                profileDetails.innerHTML = `
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3>${profile.First_Name} ${profile.Last_Name}</h3>
+                        <p class="profile-role">${profile.Role}</p>
+                    </div>
+                    <div class="profile-info">
+                        <div class="info-group">
+                            <label>Email</label>
+                            <p>${profile.Email}</p>
+                        </div>
+                        <div class="info-group">
+                            <label>User ID</label>
+                            <p>${profile.User_Id}</p>
+                        </div>
+                        ${profile.Role === 'client' ? `
+                            <div class="info-group">
+                                <label>Client ID</label>
+                                <p>${profile.Client_Id}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                alert('Failed to load profile');
+            }
+        });
+
+        // Navigation functions
         function toggleMenu() {
             const navLinks = document.querySelector('.nav-links');
             const dashboardContainer = document.querySelector('.dashboard-container');
-            
             navLinks.classList.toggle('show');
             dashboardContainer.classList.toggle('shift-left');
-            
-            // Stop event propagation
             event.stopPropagation();
         }
 
-        // Close menu when clicking outside
         document.addEventListener('click', function(event) {
             const navLinks = document.querySelector('.nav-links');
             const dashboardContainer = document.querySelector('.dashboard-container');
-            const hamburger = document.querySelector('.hamburger');
-            
             if (!event.target.closest('.nav-right') && navLinks.classList.contains('show')) {
                 navLinks.classList.remove('show');
                 dashboardContainer.classList.remove('shift-left');
             }
         });
 
-        // Add this function to handle dashboard redirection
         function redirectToDashboard(event) {
             event.preventDefault();
             const userRole = localStorage.getItem('userRole');

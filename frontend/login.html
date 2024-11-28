@@ -53,9 +53,12 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    // Store user role and clientId in localStorage
+                    // Store all necessary user data in localStorage
                     localStorage.setItem('userRole', data.role);
                     localStorage.setItem('clientId', data.clientId);
+                    localStorage.setItem('userId', data.userId);
+                    localStorage.setItem('firstName', data.firstName);
+                    localStorage.setItem('lastName', data.lastName);
                     
                     // Redirect based on role
                     if (data.role === 'client') {
