@@ -81,9 +81,38 @@ async function createNewEvent(req, res) {
     }
 }
 
+async function getClientBookings(req, res) {
+    try {
+        const clientId = req.params.clientId;
+        const connection = await pool.getConnection();
+        try {
+            const [bookings] = await connection.execute(`
+                SELECT 
+                    e.Event_Name,
+                    e.Event_Type,
+                    e.Date,
+                    v.Venue_Name,
+                    v.City
+                FROM events e
+                JOIN venues v ON e.Venue_Id = v.Venue_Id
+                WHERE e.Client_Id = ?
+                ORDER BY e.Date DESC
+            `, [clientId]);
+            
+            res.json(bookings);
+        } finally {
+            connection.release();
+        }
+    } catch (error) {
+        console.error('Error fetching client bookings:', error);
+        res.status(500).json({ message: 'Error fetching bookings' });
+    }
+}
+
 module.exports = {
     getAllEvents,
     createEvent,
     updateEventStatus,
-    createNewEvent
+    createNewEvent,
+    getClientBookings
 }; 

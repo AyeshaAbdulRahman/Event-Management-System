@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Dashboard - Taqreeb</title>
+    <title>My Bookings - Taqreeb</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="./css/styles.css">
 </head>
@@ -33,53 +33,72 @@
         </nav>
     </header>
 
-    <div class="dashboard-container" style="padding: 2rem;">  
-        <div class="dashboard-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
-            <div class="dashboard-card" style="background: white; padding: 2rem; border-radius: 10px; color: #3b306c;">
-                <h3>Pending Events</h3>
-                <p>5 events need attention</p>
-                <button class="cta-button">View Events</button>
-            </div>
-
-            <div class="dashboard-card" style="background: white; padding: 2rem; border-radius: 10px; color: #3b306c;">
-                <h3>Customer Requests</h3>
-                <p>3 new requests</p>
-                <button class="cta-button">Handle Requests</button>
-            </div>
-
-            <div class="dashboard-card" style="background: white; padding: 2rem; border-radius: 10px; color: #3b306c;">
-                <h3>Vendor Management</h3>
-                <p>2 vendors awaiting approval</p>
-                <button class="cta-button">Manage Vendors</button>
+    <div class="dashboard-container">
+        <div class="bookings-container">
+            <h2 class="section-title">My Bookings</h2>
+            <div class="bookings-grid" id="bookingsGrid">
+                <!-- Bookings will be loaded here -->
             </div>
         </div>
     </div>
 
     <script>
+        // Load client's bookings
+        document.addEventListener('DOMContentLoaded', async () => {
+            const clientId = localStorage.getItem('clientId');
+            if (!clientId) {
+                alert('Please log in to view your bookings');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/bookings/${clientId}`);
+                const bookings = await response.json();
+                
+                const bookingsGrid = document.getElementById('bookingsGrid');
+                bookingsGrid.innerHTML = bookings.map(booking => `
+                    <div class="booking-card">
+                        <h3>${booking.Event_Name}</h3>
+                        <div class="booking-info">
+                            <p class="booking-date">Date: ${new Date(booking.Date).toLocaleDateString('en-US', {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            })}</p>
+                            <p class="booking-type">Event Type: ${booking.Event_Type}</p>
+                            <div class="booking-venue">
+                                <p>Venue: ${booking.Venue_Name}</p>
+                                <p>Location: ${booking.City}</p>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading bookings:', error);
+                alert('Failed to load bookings');
+            }
+        });
+
+        // Navigation functions
         function toggleMenu() {
             const navLinks = document.querySelector('.nav-links');
             const dashboardContainer = document.querySelector('.dashboard-container');
-            
             navLinks.classList.toggle('show');
             dashboardContainer.classList.toggle('shift-left');
-            
-            // Stop event propagation
             event.stopPropagation();
         }
 
-        // Close menu when clicking outside
         document.addEventListener('click', function(event) {
             const navLinks = document.querySelector('.nav-links');
             const dashboardContainer = document.querySelector('.dashboard-container');
-            const hamburger = document.querySelector('.hamburger');
-            
             if (!event.target.closest('.nav-right') && navLinks.classList.contains('show')) {
                 navLinks.classList.remove('show');
                 dashboardContainer.classList.remove('shift-left');
             }
         });
 
-        // Add this function to handle dashboard redirection
         function redirectToDashboard(event) {
             event.preventDefault();
             const userRole = localStorage.getItem('userRole');

@@ -1383,3 +1383,75 @@ header {
     margin: 0.5rem 0;
     font-style: italic;
 }
+
+/* My Bookings Page Styles */
+.bookings-container {
+    padding: 2rem;
+    margin-top: 56px;
+}
+
+.bookings-container .section-title {
+    text-align: center;
+    color: white;
+    font-size: 2rem;
+    margin-bottom: 3rem;
+    font-weight: 600;
+}
+
+.bookings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    padding: 1rem;
+}
+
+.booking-card {
+    background-color: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.booking-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.booking-card h3 {
+    color: #3b306c;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.booking-info {
+    margin: 1rem 0;
+    padding: 1rem 0;
+    border-top: 1px solid #eee;
+}
+
+.booking-date {
+    color: #13b874;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.booking-type {
+    color: #666;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.booking-venue {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.booking-venue p {
+    color: #3b306c;
+    font-weight: 500;
+}
