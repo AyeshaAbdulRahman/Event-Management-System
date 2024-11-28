@@ -81,6 +81,25 @@ async function initializeDatabase() {
                 )
             `);
 
+            // Create items table
+            await connection.execute(`
+                CREATE TABLE IF NOT EXISTS items (
+                    Item_Id INT AUTO_INCREMENT PRIMARY KEY,
+                    Item_Name VARCHAR(100) NOT NULL
+                )
+            `);
+
+            // Create vendor_items table
+            await connection.execute(`
+                CREATE TABLE IF NOT EXISTS vendor_items (
+                    Vendor_Id INT,
+                    Item_Id INT,
+                    PRIMARY KEY (Vendor_Id, Item_Id),
+                    FOREIGN KEY (Vendor_Id) REFERENCES vendors(Vendor_Id),
+                    FOREIGN KEY (Item_Id) REFERENCES items(Item_Id)
+                )
+            `);
+
             console.log('Database initialized successfully');
         } finally {
             connection.release();
