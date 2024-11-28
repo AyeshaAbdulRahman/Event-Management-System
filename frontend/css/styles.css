@@ -1466,6 +1466,7 @@ header {
 }
 
 .profile-card {
+    position: relative;
     background-color: white;
     border-radius: 15px;
     padding: 2rem;
@@ -1528,4 +1529,19 @@ header {
     color: #3b306c;
     font-size: 1.1rem;
     font-weight: 500;
+}
+
+/* Add to your existing Profile Page Styles */
+.edit-icon {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    cursor: pointer;
+    color: #3b306c;
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+}
+
+.edit-icon:hover {
+    color: #13b874;
 }
