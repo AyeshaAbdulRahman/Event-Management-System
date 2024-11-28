@@ -72,6 +72,15 @@ async function initializeDatabase() {
                 )
             `);
 
+            // Create venues table
+            await connection.execute(`
+                CREATE TABLE IF NOT EXISTS venues (
+                    Venue_Id INT AUTO_INCREMENT PRIMARY KEY,
+                    Venue_Name VARCHAR(200) NOT NULL,
+                    City VARCHAR(100) NOT NULL
+                )
+            `);
+
             console.log('Database initialized successfully');
         } finally {
             connection.release();

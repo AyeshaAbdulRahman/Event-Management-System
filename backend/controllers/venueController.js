@@ -5,7 +5,7 @@ async function getAllVenues(req, res) {
         const connection = await pool.getConnection();
         try {
             const [venues] = await connection.execute(
-                'SELECT Venue_Id, Venue_Name, City as Venue_City FROM venues'
+                'SELECT Venue_Id, Venue_Name, City FROM venues'
             );
             res.json(venues);
         } finally {
