@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile - Taqreeb</title>
+    <title>Venues - Taqreeb</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="./css/styles.css">
 </head>
@@ -35,53 +35,41 @@
     </header>
 
     <div class="dashboard-container">
-        <div class="profile-container">
-            <div class="profile-card" id="profileDetails">
-                <div class="edit-icon" onclick="window.location.href='editprofile.html'">
-                    <i class="fas fa-edit"></i>
-                </div>
-                <!-- Profile details will be loaded here -->
+        <div class="venues-container">
+            <div class="venues-header">
+                <h2 class="section-title">Our Venues</h2>
+                <button class="register-venue-btn" onclick="window.location.href='register_venue.html'">
+                    <i class="fas fa-plus"></i> Register New Venue
+                </button>
+            </div>
+            <div class="venues-grid" id="venuesGrid">
+                <!-- Venues will be loaded here -->
             </div>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            const userId = localStorage.getItem('userId');
-            if (!userId) {
-                alert('Please log in to view your profile');
-                window.location.href = 'login.html';
-                return;
-            }
+        document.addEventListener('DOMContentLoaded', loadVenues);
 
+        async function loadVenues() {
             try {
-                const response = await fetch(`http://localhost:5000/api/profile/${userId}`);
-                const profile = await response.json();
+                const response = await fetch('http://localhost:5000/api/venues');
+                const venues = await response.json();
                 
-                const profileDetails = document.getElementById('profileDetails');
-                profileDetails.innerHTML = `
-                    <div class="edit-icon" onclick="window.location.href='editprofile.html'">
-                        <i class="fas fa-edit"></i>
-                    </div>
-                    <div class="profile-header">
-                        <div class="profile-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <h3>${profile.First_Name} ${profile.Last_Name}</h3>
-                        <p class="profile-role">${profile.Role}</p>
-                    </div>
-                    <div class="profile-info">
-                        <div class="info-group">
-                            <label>Email</label>
-                            <p>${profile.Email}</p>
+                const venuesGrid = document.getElementById('venuesGrid');
+                venuesGrid.innerHTML = venues.map(venue => `
+                    <div class="venue-card">
+                        <div class="venue-info">
+                            <h3>${venue.Venue_Name}</h3>
+                            <p class="venue-location"><i class="fas fa-map-marker-alt"></i> ${venue.City}</p>
                         </div>
                     </div>
-                `;
+                `).join('');
             } catch (error) {
-                console.error('Error loading profile:', error);
-                alert('Failed to load profile');
+                console.error('Error loading venues:', error);
+                alert('Failed to load venues');
             }
-        });
+        }
 
         // Navigation functions
         function toggleMenu() {
