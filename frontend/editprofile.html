@@ -18,12 +18,8 @@
                     <i class="fas fa-bars"></i>
                 </button>
                 <ul class="nav-links">
-                    <div class="nav-links-main">
-                        <li><a href="#" onclick="redirectToDashboard(event)">Dashboard</a></li>
-                        <li><a href="my_bookings.html">My Bookings</a></li>
-                        <li><a href="events.html">Events</a></li>
-                        <li><a href="vendors.html">Vendors</a></li>
-                        <li><a href="venues.html">Venues</a></li>
+                    <div class="nav-links-main" id="navLinksMain">
+                        <!-- Navigation links will be dynamically inserted here -->
                     </div>
                     <div class="nav-links-bottom">
                         <li><a href="profiles.html">Profile</a></li>
@@ -82,6 +78,7 @@
     <script>
         // Load current user data
         document.addEventListener('DOMContentLoaded', async () => {
+            updateNavigation();
             const userId = localStorage.getItem('userId');
             if (!userId) {
                 alert('Please log in to edit your profile');
@@ -173,6 +170,31 @@
                 window.location.href = 'customer-dashboard.html';
             } else if (userRole === 'employee') {
                 window.location.href = 'employee-dashboard.html';
+            }
+        }
+
+        function updateNavigation() {
+            const userRole = localStorage.getItem('userRole');
+            const navLinksMain = document.getElementById('navLinksMain');
+            
+            if (userRole === 'employee') {
+                navLinksMain.innerHTML = `
+                    <li><a href="#" onclick="redirectToDashboard(event)">Dashboard</a></li>
+                    <li><a href="team.html">My Team</a></li>
+                    <li><a href="events.html">Events</a></li>
+                    <li><a href="tasks.html">Tasks</a></li>
+                    <li><a href="registration.html">Registration</a></li>
+                `;
+            } else if (userRole === 'client') {
+                navLinksMain.innerHTML = `
+                    <li><a href="#" onclick="redirectToDashboard(event)">Dashboard</a></li>
+                    <li><a href="my_bookings.html">My Bookings</a></li>
+                    <li><a href="events.html">Events</a></li>
+                    <li><a href="vendors.html">Vendors</a></li>
+                    <li><a href="venues.html">Venues</a></li>
+                `;
+            } else {
+                window.location.href = 'login.html';
             }
         }
     </script>

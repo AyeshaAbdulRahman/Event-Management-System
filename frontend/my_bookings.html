@@ -6,6 +6,34 @@
     <title>My Bookings - Taqreeb</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="./css/styles.css">
+    <style>
+        .modal-content {
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal-event-details {
+            margin-bottom: 150px;  /* Force space at bottom */
+        }
+
+        .add-vendors-btn {
+            position: relative;  /* Not fixed or absolute */
+            display: block;
+            margin-left: auto;
+            width: fit-content;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .add-vendors-btn i {
+            margin-right: 8px;
+        }
+    </style>
 </head>
 <body style="background-color: #3b306c; color: white;">
     <header>
@@ -46,17 +74,19 @@
                     <div id="modalContent">
                         <!-- Modal content will be loaded here -->
                     </div>
-                    <button class="add-vendors-btn" onclick="addVendors()">
-                        <i class="fas fa-plus"></i> Add Vendors
-                    </button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Load client's bookings
-        document.addEventListener('DOMContentLoaded', async () => {
+        document.addEventListener('DOMContentLoaded', async function() {
+            const userRole = localStorage.getItem('userRole');
+            if (userRole !== 'client') {
+                window.location.href = 'login.html';
+                return;
+            }
+            
             const clientId = localStorage.getItem('clientId');
             if (!clientId) {
                 alert('Please log in to view your bookings');
@@ -121,7 +151,7 @@
             }
         }
 
-        // Update the showEventDetails function to store the current event ID
+        // Update the showEventDetails function to move the button inside the content
         let currentEventId = null;
 
         async function showEventDetails(booking) {
@@ -168,6 +198,9 @@
                             }
                         </div>
                     </div>
+                    <button class="add-vendors-btn" onclick="addVendors()">
+                        <i class="fas fa-plus"></i> Add Vendors
+                    </button>
                 `;
             } catch (error) {
                 console.error('Error loading event details:', error);
