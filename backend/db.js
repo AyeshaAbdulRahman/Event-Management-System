@@ -100,6 +100,26 @@ async function initializeDatabase() {
                 )
             `);
 
+            // Update the supplies table creation
+            await connection.execute(`
+                CREATE TABLE IF NOT EXISTS supplies (
+                    Event_Id INT NOT NULL,
+                    Vendor_Id INT NOT NULL,
+                    Item_Name VARCHAR(100) NOT NULL,
+                    PRIMARY KEY (Event_Id, Vendor_Id, Item_Name),
+                    FOREIGN KEY (Event_Id) REFERENCES events(Event_Id),
+                    FOREIGN KEY (Vendor_Id) REFERENCES vendors(Vendor_Id)
+                )
+            `);
+
+            // Create vendors table
+            await connection.execute(`
+                CREATE TABLE IF NOT EXISTS vendors (
+                    Vendor_Id INT AUTO_INCREMENT PRIMARY KEY,
+                    Vendor_Name VARCHAR(200) NOT NULL
+                )
+            `);
+
             console.log('Database initialized successfully');
         } finally {
             connection.release();

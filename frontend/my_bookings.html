@@ -120,7 +120,11 @@
             }
         }
 
+        // Update the showEventDetails function to store the current event ID
+        let currentEventId = null;
+
         function showEventDetails(booking) {
+            currentEventId = booking.Event_Id;  // Store the event ID
             const modal = document.getElementById('eventModal');
             const modalContent = document.getElementById('modalContent');
             
@@ -155,9 +159,13 @@
             modal.style.display = 'none';
         }
 
+        // Update the addVendors function
         function addVendors() {
-            // This function will be implemented later
-            alert('Vendor selection feature coming soon!');
+            if (currentEventId) {
+                window.location.href = `vendor_selector.html?eventId=${currentEventId}`;
+            } else {
+                alert('Error: No event selected');
+            }
         }
 
         // Close modal when clicking outside

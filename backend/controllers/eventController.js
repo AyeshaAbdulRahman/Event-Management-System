@@ -88,6 +88,7 @@ async function getClientBookings(req, res) {
         try {
             const [bookings] = await connection.execute(`
                 SELECT 
+                    e.Event_Id,
                     e.Event_Name,
                     e.Event_Type,
                     e.Date,

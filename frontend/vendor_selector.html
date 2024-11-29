@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Vendors - Taqreeb</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body style="background-color: #3b306c; color: white;">
+    <header>
+        <nav class="navbar">
+            <div class="nav-left">
+                <img src="./img/logo.png" alt="Logo" class="logo-image" style="height: 40px;">
+            </div>
+            <div class="nav-right">
+                <button class="hamburger" onclick="toggleMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <ul class="nav-links">
+                    <div class="nav-links-main">
+                        <li><a href="#" onclick="redirectToDashboard(event)">Dashboard</a></li>
+                        <li><a href="my_bookings.html">My Bookings</a></li>
+                        <li><a href="events.html">Events</a></li>
+                        <li><a href="vendors.html">Vendors</a></li>
+                    </div>
+                    <div class="nav-links-bottom">
+                        <li><a href="profiles.html">Profile</a></li>
+                        <li><a href="login.html">Logout</a></li>
+                    </div>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <div class="dashboard-container">
+        <div class="vendor-selector-container">
+            <h2 class="section-title">Select Vendors and Items</h2>
+            
+            <!-- Step 1: Vendor Selection -->
+            <div class="vendor-selection-section">
+                <h3>Step 1: Choose a Vendor</h3>
+                <div class="vendors-grid" id="vendorsGrid">
+                    <!-- Vendors will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Step 2: Item Selection (Initially Hidden) -->
+            <div class="item-selection-section" id="itemSelection" style="display: none;">
+                <h3>Step 2: Select Items</h3>
+                <div class="items-grid" id="itemsGrid">
+                    <!-- Items will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button id="submitSelections" class="submit-selections-btn" style="display: none;">
+                Confirm Selections
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let selectedVendorId = null;
+        let selectedItems = new Set();
+        const eventId = new URLSearchParams(window.location.search).get('eventId');
+
+        // Load vendors when page loads
+        document.addEventListener('DOMContentLoaded', loadVendors);
+
+        async function loadVendors() {
+            try {
+                const response = await fetch('http://localhost:5000/api/vendors');
+                const vendors = await response.json();
+                
+                const vendorsGrid = document.getElementById('vendorsGrid');
+                vendorsGrid.innerHTML = vendors.map(vendor => `
+                    <div class="vendor-select-card" onclick="selectVendor(${vendor.Vendor_Id})">
+                        <div class="vendor-info">
+                            <h3>${vendor.Vendor_Name}</h3>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading vendors:', error);
+                alert('Failed to load vendors');
+            }
+        }
+
+        async function selectVendor(vendorId) {
+            selectedVendorId = vendorId;
+            selectedItems.clear();
+            
+            try {
+                const response = await fetch(`http://localhost:5000/api/vendors/${vendorId}/items`);
+                const items = await response.json();
+                
+                const itemSelection = document.getElementById('itemSelection');
+                const itemsGrid = document.getElementById('itemsGrid');
+                
+                itemsGrid.innerHTML = items.map(item => `
+                    <div class="item-select-card" onclick="toggleItem(${item.Item_Id}, this)">
+                        <div class="item-info">
+                            <h4>${item.Item_Name}</h4>
+                        </div>
+                    </div>
+                `).join('');
+                
+                itemSelection.style.display = 'block';
+                document.getElementById('submitSelections').style.display = 'block';
+            } catch (error) {
+                console.error('Error loading items:', error);
+                alert('Failed to load items');
+            }
+        }
+
+        function toggleItem(itemId, element) {
+            if (selectedItems.has(itemId)) {
+                selectedItems.delete(itemId);
+                element.classList.remove('selected');
+            } else {
+                selectedItems.add(itemId);
+                element.classList.add('selected');
+            }
+        }
+
+        document.getElementById('submitSelections').addEventListener('click', async () => {
+            if (!selectedVendorId || selectedItems.size === 0) {
+                alert('Please select a vendor and at least one item');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/supplies/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        eventId: eventId,
+                        vendorId: selectedVendorId,
+                        itemNames: Array.from(selectedItems)
+                    })
+                });
+
+                if (response.ok) {
+                    window.location.href = 'my_bookings.html';
+                } else {
+                    alert('Failed to save selections');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while saving selections');
+            }
+        });
+
+        // Navigation functions
+        function toggleMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            const dashboardContainer = document.querySelector('.dashboard-container');
+            navLinks.classList.toggle('show');
+            dashboardContainer.classList.toggle('shift-left');
+            event.stopPropagation();
+        }
+
+        document.addEventListener('click', function(event) {
+            const navLinks = document.querySelector('.nav-links');
+            const dashboardContainer = document.querySelector('.dashboard-container');
+            if (!event.target.closest('.nav-right') && navLinks.classList.contains('show')) {
+                navLinks.classList.remove('show');
+                dashboardContainer.classList.remove('shift-left');
+            }
+        });
+
+        function redirectToDashboard(event) {
+            event.preventDefault();
+            const userRole = localStorage.getItem('userRole');
+            if (userRole === 'client') {
+                window.location.href = 'customer-dashboard.html';
+            } else if (userRole === 'employee') {
+                window.location.href = 'employee-dashboard.html';
+            }
+        }
+    </script>
+</body>
+</html> 
