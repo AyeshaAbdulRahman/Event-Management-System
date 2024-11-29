@@ -1932,3 +1932,77 @@ header {
 .venue-location i {
     color: #13b874;
 }
+
+/* Register Venue Styles */
+.register-venue-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.venue-form {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.venue-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.venue-form label {
+    display: block;
+    color: #3b306c;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.venue-form input,
+.venue-form select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.venue-form select {
+    background-color: white;
+}
+
+.venue-form .button-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.venue-form .submit-btn,
+.venue-form .cancel-btn {
+    flex: 1;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.venue-form .submit-btn {
+    background-color: #13b874;
+    color: white;
+}
+
+.venue-form .submit-btn:hover {
+    background-color: #0f9660;
+}
+
+.venue-form .cancel-btn {
+    background-color: #f8f9fa;
+    color: #3b306c;
+    border: 1px solid #ddd;
+}
+
+.venue-form .cancel-btn:hover {
+    background-color: #e9ecef;
+}
