@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Bookings - Taqreeb</title>
+    <title>Vendors - Taqreeb</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="./css/styles.css">
 </head>
@@ -34,50 +34,33 @@
     </header>
 
     <div class="dashboard-container">
-        <div class="bookings-container">
-            <h2 class="section-title">My Bookings</h2>
-            <div class="bookings-grid" id="bookingsGrid">
-                <!-- Bookings will be loaded here -->
+        <div class="vendors-container">
+            <h2 class="section-title">Our Vendors</h2>
+            <div class="vendors-grid" id="vendorsGrid">
+                <!-- Vendors will be loaded here -->
             </div>
         </div>
     </div>
 
     <script>
-        // Load client's bookings
+        // Load vendors when page loads
         document.addEventListener('DOMContentLoaded', async () => {
-            const clientId = localStorage.getItem('clientId');
-            if (!clientId) {
-                alert('Please log in to view your bookings');
-                window.location.href = 'login.html';
-                return;
-            }
-
             try {
-                const response = await fetch(`http://localhost:5000/api/bookings/${clientId}`);
-                const bookings = await response.json();
+                const response = await fetch('http://localhost:5000/api/vendors');
+                const vendors = await response.json();
                 
-                const bookingsGrid = document.getElementById('bookingsGrid');
-                bookingsGrid.innerHTML = bookings.map(booking => `
-                    <div class="booking-card">
-                        <h3>${booking.Event_Name}</h3>
-                        <div class="booking-info">
-                            <p class="booking-date">Date: ${new Date(booking.Date).toLocaleDateString('en-US', {
-                                weekday: 'long',
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                            })}</p>
-                            <p class="booking-type">Event Type: ${booking.Event_Type}</p>
-                            <div class="booking-venue">
-                                <p>Venue: ${booking.Venue_Name}</p>
-                                <p>Location: ${booking.City}</p>
-                            </div>
+                const vendorsGrid = document.getElementById('vendorsGrid');
+                vendorsGrid.innerHTML = vendors.map(vendor => `
+                    <div class="vendor-card">
+                        <div class="vendor-info">
+                            <h3>${vendor.Vendor_Name}</h3>
+                            <p class="vendor-items">Items: ${vendor.Items || 'No items listed'}</p>
                         </div>
                     </div>
                 `).join('');
             } catch (error) {
-                console.error('Error loading bookings:', error);
-                alert('Failed to load bookings');
+                console.error('Error loading vendors:', error);
+                alert('Failed to load vendors');
             }
         });
 

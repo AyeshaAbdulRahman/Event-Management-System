@@ -5,6 +5,7 @@ const { createPool, initializeDatabase, registerUser, pool } = require('./db');
 const eventController = require('./controllers/eventController');
 const venueController = require('./controllers/venueController');
 const userController = require('./controllers/userController');
+const vendorController = require('./controllers/vendorController');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -139,6 +140,7 @@ async function startServer() {
         app.get('/api/bookings/:clientId', eventController.getClientBookings);
         app.get('/api/profile/:userId', userController.getUserProfile);
         app.put('/api/profile/update', userController.updateUserProfile);
+        app.get('/api/vendors', vendorController.getAllVendors);
 
         app.listen(port, () => {
             console.log(`Server is running on port ${port}`);
