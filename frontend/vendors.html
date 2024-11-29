@@ -40,21 +40,31 @@
                 <!-- Vendors will be loaded here -->
             </div>
         </div>
+
+        <!-- Add Modal for Vendor Details -->
+        <div id="vendorModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeVendorModal()">&times;</span>
+                <div id="vendorDetails">
+                    <!-- Vendor details will be loaded here -->
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Load vendors when page loads
-        document.addEventListener('DOMContentLoaded', async () => {
+        document.addEventListener('DOMContentLoaded', loadVendors);
+
+        async function loadVendors() {
             try {
                 const response = await fetch('http://localhost:5000/api/vendors');
                 const vendors = await response.json();
                 
                 const vendorsGrid = document.getElementById('vendorsGrid');
                 vendorsGrid.innerHTML = vendors.map(vendor => `
-                    <div class="vendor-card">
+                    <div class="vendor-card" onclick="showVendorDetails(${vendor.Vendor_Id}, '${vendor.Vendor_Name}')">
                         <div class="vendor-info">
                             <h3>${vendor.Vendor_Name}</h3>
-                            <p class="vendor-items">Items: ${vendor.Items || 'No items listed'}</p>
                         </div>
                     </div>
                 `).join('');
@@ -62,7 +72,57 @@
                 console.error('Error loading vendors:', error);
                 alert('Failed to load vendors');
             }
-        });
+        }
+
+        async function showVendorDetails(vendorId, vendorName) {
+            try {
+                const response = await fetch(`http://localhost:5000/api/vendors/${vendorId}/supplies`);
+                const supplies = await response.json();
+                
+                const modal = document.getElementById('vendorModal');
+                const detailsDiv = document.getElementById('vendorDetails');
+                
+                let html = `
+                    <h2>${vendorName}</h2>
+                    <div class="vendor-supplies">
+                        <h3>Items Booked</h3>
+                `;
+
+                if (supplies.length === 0) {
+                    html += `<p class="no-items">No items booked</p>`;
+                } else {
+                    html += `<div class="supplies-list">`;
+                    supplies.forEach(supply => {
+                        html += `
+                            <div class="supply-item">
+                                <span class="item-name">${supply.Item_Name}</span>
+                                <span class="event-name">for ${supply.Event_Name}</span>
+                            </div>
+                        `;
+                    });
+                    html += `</div>`;
+                }
+
+                html += `</div>`;
+                detailsDiv.innerHTML = html;
+                modal.style.display = 'block';
+            } catch (error) {
+                console.error('Error loading vendor details:', error);
+                alert('Failed to load vendor details');
+            }
+        }
+
+        function closeVendorModal() {
+            document.getElementById('vendorModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('vendorModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
 
         // Navigation functions
         function toggleMenu() {

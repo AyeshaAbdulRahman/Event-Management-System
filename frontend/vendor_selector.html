@@ -131,7 +131,17 @@
             }
 
             try {
-                const response = await fetch('http://localhost:5000/api/supplies/create', {
+                // Get the item names for the selected IDs
+                const response = await fetch(`http://localhost:5000/api/vendors/${selectedVendorId}/items`);
+                const items = await response.json();
+                
+                // Create a map of ID to name
+                const itemMap = new Map(items.map(item => [item.Item_Id, item.Item_Name]));
+                
+                // Convert selected IDs to names
+                const selectedItemNames = Array.from(selectedItems).map(id => itemMap.get(id));
+
+                const response2 = await fetch('http://localhost:5000/api/supplies/create', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -139,11 +149,11 @@
                     body: JSON.stringify({
                         eventId: eventId,
                         vendorId: selectedVendorId,
-                        itemNames: Array.from(selectedItems)
+                        itemNames: selectedItemNames
                     })
                 });
 
-                if (response.ok) {
+                if (response2.ok) {
                     window.location.href = 'my_bookings.html';
                 } else {
                     alert('Failed to save selections');

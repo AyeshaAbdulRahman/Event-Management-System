@@ -48,12 +48,12 @@ async function getEventSupplies(req, res) {
         try {
             const [supplies] = await connection.execute(`
                 SELECT 
-                    s.Event_Id,
-                    v.Vendor_Name,
-                    s.Item_Name
+                    s.Item_Name,
+                    v.Vendor_Name
                 FROM supplies s
                 JOIN vendors v ON s.Vendor_Id = v.Vendor_Id
                 WHERE s.Event_Id = ?
+                ORDER BY v.Vendor_Name
             `, [eventId]);
 
             res.json(supplies);
