@@ -1659,3 +1659,183 @@ header {
     font-size: 1rem;
     margin-top: 0.5rem;
 }
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    position: relative;
+    background-color: white;
+    margin: 10% auto;
+    padding: 2rem;
+    border-radius: 15px;
+    width: 80%;
+    max-width: 700px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.close-modal {
+    position: absolute;
+    right: 1.5rem;
+    top: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+}
+
+.close-modal:hover {
+    color: #333;
+}
+
+.modal-event-details h2 {
+    color: #3b306c;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+}
+
+.event-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.info-section {
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.info-section h3 {
+    color: #3b306c;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.info-section p {
+    margin: 0.5rem 0;
+    color: #666;
+}
+
+.add-vendors-btn {
+    position: absolute;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    background-color: #13b874;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background-color 0.3s ease;
+}
+
+.add-vendors-btn:hover {
+    background-color: #0f9660;
+}
+
+/* Make booking cards clickable */
+.booking-card {
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.booking-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Update Modal Styles */
+.modal-content.booking-details-modal {
+    padding: 3rem;
+    max-width: 800px;
+    margin: 5% auto;
+}
+
+.modal-event-details h2 {
+    color: #3b306c;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-weight: 600;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.event-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+    margin-bottom: 3rem;
+}
+
+.info-section {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.info-section h3 {
+    color: #13b874;
+    font-size: 1.3rem;
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.info-section p {
+    margin: 1rem 0;
+    color: #495057;
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+.info-section p strong {
+    color: #3b306c;
+    font-weight: 600;
+    margin-right: 0.5rem;
+    display: inline-block;
+    min-width: 80px;
+}
+
+.add-vendors-btn {
+    position: absolute;
+    bottom: 2rem;
+    right: 2rem;
+    background-color: #13b874;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(19, 184, 116, 0.2);
+}
+
+.add-vendors-btn i {
+    margin-right: 0.5rem;
+}
+
+.close-modal {
+    position: absolute;
+    right: 2rem;
+    top: 2rem;
+    font-size: 1.8rem;
+    color: #adb5bd;
+    transition: color 0.2s ease;
+}
+
+.close-modal:hover {
+    color: #3b306c;
+}

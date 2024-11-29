@@ -39,6 +39,17 @@
             <div class="bookings-grid" id="bookingsGrid">
                 <!-- Bookings will be loaded here -->
             </div>
+            <div id="eventModal" class="modal">
+                <div class="modal-content booking-details-modal">
+                    <span class="close-modal" onclick="closeEventModal()">&times;</span>
+                    <div id="modalContent">
+                        <!-- Modal content will be loaded here -->
+                    </div>
+                    <button class="add-vendors-btn" onclick="addVendors()">
+                        <i class="fas fa-plus"></i> Add Vendors
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -58,7 +69,7 @@
                 
                 const bookingsGrid = document.getElementById('bookingsGrid');
                 bookingsGrid.innerHTML = bookings.map(booking => `
-                    <div class="booking-card">
+                    <div class="booking-card" onclick="showEventDetails(${JSON.stringify(booking).replace(/"/g, '&quot;')})">
                         <h3>${booking.Event_Name}</h3>
                         <div class="booking-info">
                             <p class="booking-date">Date: ${new Date(booking.Date).toLocaleDateString('en-US', {
@@ -106,6 +117,54 @@
                 window.location.href = 'customer-dashboard.html';
             } else if (userRole === 'employee') {
                 window.location.href = 'employee-dashboard.html';
+            }
+        }
+
+        function showEventDetails(booking) {
+            const modal = document.getElementById('eventModal');
+            const modalContent = document.getElementById('modalContent');
+            
+            modalContent.innerHTML = `
+                <div class="modal-event-details">
+                    <h2>${booking.Event_Name}</h2>
+                    <div class="event-info">
+                        <div class="info-section">
+                            <h3>Event Details</h3>
+                            <p><strong>Date:</strong> ${new Date(booking.Date).toLocaleDateString('en-US', {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            })}</p>
+                            <p><strong>Type:</strong> ${booking.Event_Type}</p>
+                        </div>
+                        <div class="info-section">
+                            <h3>Venue Information</h3>
+                            <p><strong>Venue:</strong> ${booking.Venue_Name}</p>
+                            <p><strong>Location:</strong> ${booking.City}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+        }
+
+        function closeEventModal() {
+            const modal = document.getElementById('eventModal');
+            modal.style.display = 'none';
+        }
+
+        function addVendors() {
+            // This function will be implemented later
+            alert('Vendor selection feature coming soon!');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('eventModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
             }
         }
     </script>
