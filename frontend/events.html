@@ -40,7 +40,7 @@
             <div class="events-grid" id="eventsGrid">
                 <!-- Events will be dynamically loaded here -->
             </div>
-            <button class="request-event-btn" onclick="openRequestEventModal()">
+            <button class="request-event-btn" onclick="openRequestEventModal()" id="requestEventBtn" style="display: none;">
                 Request New Event
             </button>
         </div>
@@ -170,8 +170,22 @@
             }
         });
 
-        // Load events when page loads
-        document.addEventListener('DOMContentLoaded', loadEvents);
+        // Add this function at the beginning of your script section
+        function checkUserRole() {
+            const userRole = localStorage.getItem('userRole');
+            const requestEventBtn = document.getElementById('requestEventBtn');
+            if (userRole === 'client') {
+                requestEventBtn.style.display = 'block';
+            } else {
+                requestEventBtn.style.display = 'none';
+            }
+        }
+
+        // Add this to your DOMContentLoaded event listener
+        document.addEventListener('DOMContentLoaded', () => {
+            loadEvents();
+            checkUserRole(); // Add this line to check user role when page loads
+        });
     </script>
 </body>
 </html> 
