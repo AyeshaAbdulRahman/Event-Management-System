@@ -78,7 +78,7 @@
                 venues.forEach(venue => {
                     const option = document.createElement('option');
                     option.value = venue.Venue_Id;
-                    option.textContent = `${venue.Venue_Name}, ${venue.Venue_City}`;
+                    option.textContent = `${venue.Venue_Name}, ${venue.City}`;
                     venueSelect.appendChild(option);
                 });
             } catch (error) {

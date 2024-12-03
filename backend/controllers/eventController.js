@@ -1,4 +1,4 @@
-const Event = require('../models/Event');
+const Event = require('../models/eventModel');
 const { pool } = require('../db');
 
 async function getAllEvents(req, res) {
