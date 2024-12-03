@@ -11,7 +11,6 @@ const registrationRoutes = require('./routes/registration');
 const paymentsRoutes = require('./routes/payment');
 const tasksRoutes = require('./routes/tasks');
 const suppliesRoutes = require('./routes/supplies');
-const adminRoutes = require('./routes/admin');
 const vendorRoutes = require('./routes/vendors');
 
 app.use(bodyParser.json());
@@ -30,7 +29,6 @@ app.use('/registration', registrationRoutes);
 app.use('/payments', paymentsRoutes);
 app.use('/tasks', tasksRoutes);
 app.use('/supplies', suppliesRoutes);
-app.use('/admins', adminRoutes);
 app.use('/vendors', vendorRoutes);
 
 const PORT = process.env.PORT || 5000;
