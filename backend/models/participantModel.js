@@ -1,90 +1,71 @@
-const mysql = require('mysql2/promise');
-const { getPool } = require('../db');
+const { pool } = require('../db');
 
-async function getAllParticipants() {
-    const pool = getPool();
+async function getNextParticipantId() {
     const connection = await pool.getConnection();
     try {
-        const [rows] = await connection.execute(`
-            SELECT p.Participant_Id, p.Participant_Name, e.Event_Name
-            FROM Participants p
-            JOIN Events e ON p.Event_Id = e.Event_Id`);
+        // Get the maximum participant ID currently in use
+        const [rows] = await connection.execute('SELECT MAX(Participant_Id) as maxId FROM participants');
+        const maxId = rows[0].maxId || 0;
+        return maxId + 1; // Return next available ID
+    } finally {
+        connection.release();
+    }
+}
+
+async function createParticipant(participantName, eventId) {
+    const connection = await pool.getConnection();
+    try {
+        // Validate eventId is a number
+        if (!eventId || isNaN(parseInt(eventId))) {
+            throw new Error('Invalid Event ID');
+        }
+
+        const nextId = await getNextParticipantId();
+        
+        const [result] = await connection.execute(
+            'INSERT INTO participants (Participant_Id, Participant_Name, Event_Id) VALUES (?, ?, ?)',
+            [nextId, participantName, parseInt(eventId)]
+        );
+        return { ...result, insertId: nextId };
+    } finally {
+        connection.release();
+    }
+}
+
+async function getParticipantsByEvent(eventId) {
+    const connection = await pool.getConnection();
+    try {
+        const [rows] = await connection.execute(
+            'SELECT * FROM participants WHERE Event_Id = ?',
+            [eventId]
+        );
         return rows;
     } finally {
         connection.release();
     }
 }
 
-async function getParticipantById(id) {
-    const pool = getPool();
+async function getAllParticipants() {
     const connection = await pool.getConnection();
     try {
         const [rows] = await connection.execute(`
-            SELECT p.Participant_Id, p.Participant_Name, e.Event_Name
-            FROM Participants p
-            JOIN Events e ON p.Event_Id = e.Event_Id
-            WHERE p.Participant_Id = ?`, [id]);
-        return rows[0]; // Return specific participant details
+            SELECT 
+                p.Participant_Id,
+                p.Participant_Name,
+                e.Event_Name,
+                e.Date as Event_Date
+            FROM participants p
+            JOIN events e ON p.Event_Id = e.Event_Id
+            ORDER BY p.Participant_Id DESC
+        `);
+        return rows;
     } finally {
         connection.release();
     }
 }
 
-async function getParticipantByName(name) {
-    const pool = getPool();
-    const connection = await pool.getConnection();
-    try {
-        const [rows] = await connection.execute(`
-            SELECT p.Participant_Id, p.Participant_Name, e.Event_Name
-            FROM Participants p
-            JOIN Events e ON p.Event_Id = e.Event_Id
-            WHERE p.Participant_Name = ?`, [name]);
-        return rows[0]; // Return specific participant details
-    } finally {
-        connection.release();
-    }
-}
-
-async function createParticipant(participant) {
-    const pool = getPool();
-    const connection = await pool.getConnection();
-    try {
-        const [result] = await connection.execute(`
-            INSERT INTO Participants (Participant_Name, Event_Id)
-            SELECT ?, e.Event_Id FROM Events e WHERE e.Event_Name = ?`,
-            [participant.Participant_Name, participant.Event_Name]);
-        return result;
-    } finally {
-        connection.release();
-    }
-}
-
-async function updateParticipantById(id, participant) {
-    const pool = getPool();
-    const connection = await pool.getConnection();
-    try {
-        const [result] = await connection.execute(`
-            UPDATE Participants p
-            JOIN Events e ON p.Event_Id = e.Event_Id
-            SET p.Participant_Name = ?
-            WHERE p.Participant_Id = ? AND e.Event_Name = ?`,
-            [participant.Participant_Name, id, participant.Event_Name]);
-        return result;
-    } finally {
-        connection.release();
-    }
-}
-
-async function deleteParticipantById(id) {
-    const pool = getPool();
-    const connection = await pool.getConnection();
-    try {
-        const [result] = await connection.execute(`
-            DELETE p FROM Participants p WHERE p.Participant_Id = ?`, [id]);
-        return result;
-    } finally {
-        connection.release();
-    }
-}
-
-module.exports = { getAllParticipants, getParticipantById, getParticipantByName, createParticipant, updateParticipantById, deleteParticipantById };
+module.exports = {
+    createParticipant,
+    getParticipantsByEvent,
+    getAllParticipants
+};

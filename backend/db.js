@@ -120,6 +120,16 @@ async function initializeDatabase() {
                 )
             `);
 
+            // Add this to your initializeDatabase function
+            await connection.execute(`
+                CREATE TABLE IF NOT EXISTS participants (
+                    Participant_Id INT AUTO_INCREMENT PRIMARY KEY,
+                    Participant_Name VARCHAR(200) NOT NULL,
+                    Event_Id INT,
+                    FOREIGN KEY (Event_Id) REFERENCES events(Event_Id)
+                )
+            `);
+
             console.log('Database initialized successfully');
         } finally {
             connection.release();

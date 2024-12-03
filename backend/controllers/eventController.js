@@ -7,19 +7,16 @@ async function getAllEvents(req, res) {
         try {
             const [events] = await connection.execute(`
                 SELECT 
-                    e.Event_Name,
-                    e.Event_Type,
-                    e.Date,
-                    v.Venue_Name,
-                    v.City,
-                    u.First_Name,
-                    u.Last_Name
-                FROM events e
-                JOIN venues v ON e.Venue_Id = v.Venue_Id
-                JOIN clients c ON e.Client_Id = c.Client_Id
-                JOIN users u ON c.User_Id = u.User_Id
-                ORDER BY e.Date DESC
+                    Event_Id,
+                    Event_Name,
+                    Event_Type,
+                    Date,
+                    Venue_Id
+                FROM events
+                ORDER BY Date DESC
             `);
+            
+            console.log('Events being sent:', events);
             res.json(events);
         } finally {
             connection.release();
