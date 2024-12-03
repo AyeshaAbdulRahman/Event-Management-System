@@ -7,6 +7,7 @@ const venueController = require('./controllers/venueController');
 const userController = require('./controllers/userController');
 const vendorController = require('./controllers/vendorController');
 const suppliesController = require('./controllers/suppliesController');
+const employeeController = require('./controllers/employeeController');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -147,6 +148,7 @@ async function startServer() {
         app.get('/api/events/:eventId/supplies', suppliesController.getEventSupplies);
         app.get('/api/vendors/:vendorId/supplies', vendorController.getVendorSupplies);
         app.post('/api/venues/create', venueController.createVenue);
+        app.get('/api/employee/team/:userId', employeeController.getTeamMembers);
 
         app.listen(port, () => {
             console.log(`Server is running on port ${port}`);
