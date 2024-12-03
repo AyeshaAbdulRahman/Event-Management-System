@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - Taqreeb</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body style="background-color: #3b306c; color: white;">
+    <header>
+        <nav class="navbar">
+            <div class="nav-left">
+                <img src="./img/logo.png" alt="Logo" class="logo-image" style="height: 40px;">
+            </div>
+            <div class="nav-right">
+                <button class="hamburger" onclick="toggleMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <ul class="nav-links">
+                    <div class="nav-links-main" id="navLinksMain">
+                        <!-- Navigation links will be dynamically inserted here -->
+                    </div>
+                    <div class="nav-links-bottom">
+                        <li><a href="profiles.html">Profile</a></li>
+                        <li><a href="login.html">Logout</a></li>
+                    </div>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <div class="dashboard-container">
+        <div class="form-container" style="max-width: 600px; margin: 2rem auto; padding: 2rem;">
+            <h2 class="section-title">Process Payment</h2>
+            <div id="paymentForm" style="background: white; padding: 2rem; border-radius: 10px; color: #3b306c;">
+                <div class="participant-info" style="margin-bottom: 2rem;">
+                    <h3>Participant Information</h3>
+                    <p id="participantName"></p>
+                    <p id="eventName"></p>
+                </div>
+
+                <div class="payment-info">
+                    <div class="form-group">
+                        <label>Amount to Pay</label>
+                        <input 
+                            type="text" 
+                            id="amount" 
+                            value="500.00" 
+                            readonly 
+                            style="width: 100%; padding: 0.5rem; margin-bottom: 1rem; border: 1px solid #ddd; border-radius: 5px; background-color: #f5f5f5;"
+                        >
+                    </div>
+
+                    <button 
+                        onclick="processPayment()"
+                        style="background-color: #13b874; color: white; padding: 0.8rem 1.5rem; border: none; border-radius: 5px; cursor: pointer; width: 100%;"
+                    >
+                        Pay Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get participant ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const participantId = urlParams.get('id');
+
+        async function loadParticipantInfo() {
+            try {
+                const response = await fetch(`http://localhost:5000/api/participants/${participantId}`);
+                const data = await response.json();
+                
+                document.getElementById('participantName').textContent = `Participant: ${data.Participant_Name}`;
+                document.getElementById('eventName').textContent = `Event: ${data.Event_Name}`;
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error loading participant information');
+            }
+        }
+
+        async function processPayment() {
+            try {
+                const response = await fetch('http://localhost:5000/api/payments/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        participantId: participantId,
+                        amount: 500.00
+                    })
+                });
+
+                if (response.ok) {
+                    alert('Payment processed successfully!');
+                    window.location.href = 'registration.html';
+                } else {
+                    const data = await response.json();
+                    alert(data.message || 'Failed to process payment');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error processing payment');
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!participantId) {
+                alert('No participant selected');
+                window.location.href = 'registration.html';
+                return;
+            }
+            updateNavigation();
+            loadParticipantInfo();
+        });
+
+        // Your existing navigation functions...
+    </script>
+</body>
+</html> 

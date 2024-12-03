@@ -54,8 +54,40 @@ async function getAllParticipants(req, res) {
     }
 }
 
+async function getParticipantById(req, res) {
+    try {
+        const participantId = req.params.participantId;
+        const participant = await Participant.getParticipantById(participantId);
+        
+        if (participant) {
+            res.json(participant);
+        } else {
+            res.status(404).json({ message: 'Participant not found' });
+        }
+    } catch (error) {
+        console.error('Error fetching participant:', error);
+        res.status(500).json({ message: 'Error fetching participant' });
+    }
+}
+
+async function createPayment(req, res) {
+    try {
+        const { participantId, amount } = req.body;
+        const result = await Participant.createPayment(participantId, amount);
+        res.status(201).json({ 
+            message: 'Payment processed successfully',
+            paymentId: result.insertId
+        });
+    } catch (error) {
+        console.error('Error creating payment:', error);
+        res.status(500).json({ message: 'Error processing payment' });
+    }
+}
+
 module.exports = {
     createParticipant,
     getParticipantsByEvent,
-    getAllParticipants
+    getAllParticipants,
+    getParticipantById,
+    createPayment
 }; 

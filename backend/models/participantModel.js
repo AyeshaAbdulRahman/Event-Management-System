@@ -70,8 +70,41 @@ async function getAllParticipants() {
     }
 }
 
+async function getParticipantById(participantId) {
+    const connection = await pool.getConnection();
+    try {
+        const [rows] = await connection.execute(`
+            SELECT 
+                p.Participant_Id,
+                p.Participant_Name,
+                e.Event_Name
+            FROM participants p
+            JOIN events e ON p.Event_Id = e.Event_Id
+            WHERE p.Participant_Id = ?
+        `, [participantId]);
+        return rows[0];
+    } finally {
+        connection.release();
+    }
+}
+
+async function createPayment(participantId, amount) {
+    const connection = await pool.getConnection();
+    try {
+        const [result] = await connection.execute(
+            'INSERT INTO payments (Participant_Id, Amount) VALUES (?, ?)',
+            [participantId, amount]
+        );
+        return result;
+    } finally {
+        connection.release();
+    }
+}
+
 module.exports = {
     createParticipant,
     getParticipantsByEvent,
-    getAllParticipants
+    getAllParticipants,
+    getParticipantById,
+    createPayment
 };

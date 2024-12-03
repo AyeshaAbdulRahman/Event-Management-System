@@ -124,15 +124,25 @@
                     <div class="registration-card" style="background: white; padding: 2rem; border-radius: 10px; color: #3b306c;">
                         <div style="display: flex; justify-content: space-between; align-items: start;">
                             <h3>${participant.Participant_Name}</h3>
-                            <div class="payment-status" style="
-                                padding: 0.5rem 1rem;
-                                border-radius: 5px;
-                                font-weight: bold;
-                                background-color: ${participant.isPaid ? '#e6ffe6' : '#ffe6e6'};
-                                color: ${participant.isPaid ? '#008000' : '#cc0000'};
-                            ">
-                                ${participant.isPaid ? 'PAID' : 'MUST BE PAID'}
-                            </div>
+                            ${participant.isPaid ? 
+                                `<div class="payment-status" style="
+                                    padding: 0.5rem 1rem;
+                                    border-radius: 5px;
+                                    font-weight: bold;
+                                    background-color: #e6ffe6;
+                                    color: #008000;
+                                ">PAID</div>` :
+                                `<button onclick="window.location.href='payment.html?id=${participant.Participant_Id}'" 
+                                    class="payment-status" style="
+                                    padding: 0.5rem 1rem;
+                                    border-radius: 5px;
+                                    font-weight: bold;
+                                    background-color: #ffe6e6;
+                                    color: #cc0000;
+                                    border: none;
+                                    cursor: pointer;
+                                ">MUST BE PAID</button>`
+                            }
                         </div>
                         <div class="participant-details">
                             <p>ID: ${participant.Participant_Id}</p>
