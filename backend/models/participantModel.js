@@ -53,9 +53,15 @@ async function getAllParticipants() {
                 p.Participant_Id,
                 p.Participant_Name,
                 e.Event_Name,
-                e.Date as Event_Date
+                e.Date as Event_Date,
+                CASE 
+                    WHEN pay.Payment_Id IS NOT NULL THEN true
+                    ELSE false
+                END as isPaid,
+                COALESCE(pay.Amount, 0) as Amount
             FROM participants p
             JOIN events e ON p.Event_Id = e.Event_Id
+            LEFT JOIN payments pay ON p.Participant_Id = pay.Participant_Id
             ORDER BY p.Participant_Id DESC
         `);
         return rows;

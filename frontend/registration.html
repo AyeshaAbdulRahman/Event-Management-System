@@ -122,11 +122,23 @@
 
                 registrationsGrid.innerHTML = participants.map(participant => `
                     <div class="registration-card" style="background: white; padding: 2rem; border-radius: 10px; color: #3b306c;">
-                        <h3>${participant.Participant_Name}</h3>
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <h3>${participant.Participant_Name}</h3>
+                            <div class="payment-status" style="
+                                padding: 0.5rem 1rem;
+                                border-radius: 5px;
+                                font-weight: bold;
+                                background-color: ${participant.isPaid ? '#e6ffe6' : '#ffe6e6'};
+                                color: ${participant.isPaid ? '#008000' : '#cc0000'};
+                            ">
+                                ${participant.isPaid ? 'PAID' : 'MUST BE PAID'}
+                            </div>
+                        </div>
                         <div class="participant-details">
                             <p>ID: ${participant.Participant_Id}</p>
                             <p>Event: ${participant.Event_Name}</p>
                             <p>Date: ${new Date(participant.Event_Date).toLocaleDateString()}</p>
+                            ${participant.isPaid ? `<p>Amount Paid: $${participant.Amount}</p>` : ''}
                         </div>
                     </div>
                 `).join('');

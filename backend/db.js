@@ -130,6 +130,16 @@ async function initializeDatabase() {
                 )
             `);
 
+            // Add this to your initializeDatabase function
+            await connection.execute(`
+                CREATE TABLE IF NOT EXISTS payments (
+                    Payment_Id INT AUTO_INCREMENT PRIMARY KEY,
+                    Participant_Id INT,
+                    Amount DECIMAL(10,2),
+                    FOREIGN KEY (Participant_Id) REFERENCES participants(Participant_Id)
+                )
+            `);
+
             console.log('Database initialized successfully');
         } finally {
             connection.release();
