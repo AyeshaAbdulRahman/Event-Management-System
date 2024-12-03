@@ -1,5 +1,6 @@
 const Event = require('../models/eventModel');
 const { pool } = require('../db');
+const Task = require('../models/taskModel');
 
 async function getAllEvents(req, res) {
     try {
@@ -68,7 +69,7 @@ async function createNewEvent(req, res) {
 
         const { eventName, eventType, eventDate, venueId, clientId, payment } = req.body;
         
-        // Create event
+        // First: Create event
         const [eventResult] = await connection.execute(
             'INSERT INTO events (Event_Name, Event_Type, Date, Client_Id, Venue_Id) VALUES (?, ?, ?, ?, ?)',
             [eventName, eventType, eventDate, clientId, venueId]
@@ -76,18 +77,32 @@ async function createNewEvent(req, res) {
 
         const eventId = eventResult.insertId;
 
-        // Create event payment
+        // Second: Create event payment
         await connection.execute(
             'INSERT INTO event_payment (Event_Id, Payment) VALUES (?, ?)',
             [eventId, payment]
         );
 
+        // Commit the event and payment creation
         await connection.commit();
 
-        res.status(201).json({ 
-            message: 'Event created successfully', 
-            eventId: eventId 
-        });
+        // Third: After event is committed, create tasks
+        try {
+            await Task.createTasksForEvent(eventId, eventType);
+            
+            res.status(201).json({ 
+                message: 'Event and tasks created successfully', 
+                eventId: eventId 
+            });
+        } catch (taskError) {
+            console.error('Error creating tasks:', taskError);
+            // Even if tasks fail, the event was created successfully
+            res.status(201).json({ 
+                message: 'Event created successfully, but tasks creation failed', 
+                eventId: eventId 
+            });
+        }
+
     } catch (error) {
         await connection.rollback();
         console.error('Error creating event:', error);

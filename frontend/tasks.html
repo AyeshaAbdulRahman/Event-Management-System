@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasks - Taqreeb</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body style="background-color: #3b306c; color: white;">
+    <header>
+        <nav class="navbar">
+            <div class="nav-left">
+                <img src="./img/logo.png" alt="Logo" class="logo-image" style="height: 40px;">
+            </div>
+            <div class="nav-right">
+                <button class="hamburger" onclick="toggleMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <ul class="nav-links">
+                    <div class="nav-links-main" id="navLinksMain">
+                        <!-- Navigation links will be dynamically inserted here -->
+                    </div>
+                    <div class="nav-links-bottom">
+                        <li><a href="profiles.html">Profile</a></li>
+                        <li><a href="login.html">Logout</a></li>
+                    </div>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <div class="dashboard-container">
+        <div style="padding: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h2 class="section-title">Team Tasks</h2>
+            </div>
+
+            <div class="tasks-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                <!-- Tasks will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load tasks for the employee's team
+        async function loadTasks() {
+            try {
+                const userId = localStorage.getItem('userId');
+                const response = await fetch(`http://localhost:5000/api/employee/tasks/${userId}`);
+                const tasks = await response.json();
+                
+                console.log('Tasks:', tasks); // Debug log
+                
+                const tasksGrid = document.querySelector('.tasks-grid');
+                
+                if (tasks.length === 0) {
+                    tasksGrid.innerHTML = `
+                        <div class="task-card" style="background: white; padding: 2rem; border-radius: 10px; color: #3b306c;">
+                            <h3>No Tasks Assigned</h3>
+                            <p>Your team currently has no tasks assigned.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                tasksGrid.innerHTML = tasks.map(task => `
+                    <div class="task-card" style="background: white; padding: 2rem; border-radius: 10px; color: #3b306c;">
+                        <h3>${task.Task_Name}</h3>
+                        <div class="task-details" style="margin-top: 1rem;">
+                            <p><i class="fas fa-calendar-alt"></i> Event: ${task.Event_Name}</p>
+                            <p><i class="fas fa-users"></i> Team: ${task.Team_Name}</p>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading tasks:', error);
+                alert('Failed to load tasks');
+            }
+        }
+
+        function updateNavigation() {
+            const userRole = localStorage.getItem('userRole');
+            const navLinksMain = document.getElementById('navLinksMain');
+            
+            if (userRole === 'employee') {
+                navLinksMain.innerHTML = `
+                    <li><a href="#" onclick="redirectToDashboard(event)">Dashboard</a></li>
+                    <li><a href="team.html">My Team</a></li>
+                    <li><a href="events.html">Events</a></li>
+                    <li><a href="tasks.html" class="active">Tasks</a></li>
+                    <li><a href="registration.html">Registration</a></li>
+                `;
+            } else {
+                window.location.href = 'login.html';
+            }
+        }
+
+        function toggleMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            const dashboardContainer = document.querySelector('.dashboard-container');
+            navLinks.classList.toggle('show');
+            dashboardContainer.classList.toggle('shift-left');
+            event.stopPropagation();
+        }
+
+        document.addEventListener('click', function(event) {
+            const navLinks = document.querySelector('.nav-links');
+            const dashboardContainer = document.querySelector('.dashboard-container');
+            if (!event.target.closest('.nav-right') && navLinks.classList.contains('show')) {
+                navLinks.classList.remove('show');
+                dashboardContainer.classList.remove('shift-left');
+            }
+        });
+
+        function redirectToDashboard(event) {
+            event.preventDefault();
+            const userRole = localStorage.getItem('userRole');
+            if (userRole === 'client') {
+                window.location.href = 'customer-dashboard.html';
+            } else if (userRole === 'employee') {
+                window.location.href = 'employee-dashboard.html';
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            updateNavigation();
+            loadTasks();
+        });
+    </script>
+</body>
+</html> 

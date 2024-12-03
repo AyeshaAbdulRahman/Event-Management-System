@@ -9,6 +9,7 @@ const vendorController = require('./controllers/vendorController');
 const suppliesController = require('./controllers/suppliesController');
 const employeeController = require('./controllers/employeeController');
 const participantController = require('./controllers/participantController');
+const taskController = require('./controllers/taskController');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -156,6 +157,7 @@ async function startServer() {
         app.post('/api/payments/create', participantController.createPayment);
         app.get('/api/participants/:participantId', participantController.getParticipantById);
         app.get('/api/events/:eventId/payment', eventController.getEventPayment);
+        app.get('/api/employee/tasks/:userId', taskController.getEmployeeTeamTasks);
 
         app.listen(port, () => {
             console.log(`Server is running on port ${port}`);
