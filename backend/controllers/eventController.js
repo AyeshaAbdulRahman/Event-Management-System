@@ -55,26 +55,38 @@ async function updateEventStatus(req, res) {
 }
 
 async function createNewEvent(req, res) {
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
-        try {
-            const { eventName, eventType, eventDate, venueId, clientId } = req.body;
-            
-            const [result] = await connection.execute(
-                'INSERT INTO events (Event_Name, Event_Type, Date, Client_Id, Venue_Id) VALUES (?, ?, ?, ?, ?)',
-                [eventName, eventType, eventDate, clientId, venueId]
-            );
+        await connection.beginTransaction();
 
-            res.status(201).json({ 
-                message: 'Event created successfully', 
-                eventId: result.insertId 
-            });
-        } finally {
-            connection.release();
-        }
+        const { eventName, eventType, eventDate, venueId, clientId, payment } = req.body;
+        
+        // Create event
+        const [eventResult] = await connection.execute(
+            'INSERT INTO events (Event_Name, Event_Type, Date, Client_Id, Venue_Id) VALUES (?, ?, ?, ?, ?)',
+            [eventName, eventType, eventDate, clientId, venueId]
+        );
+
+        const eventId = eventResult.insertId;
+
+        // Create event payment
+        await connection.execute(
+            'INSERT INTO event_payment (Event_Id, Payment) VALUES (?, ?)',
+            [eventId, payment]
+        );
+
+        await connection.commit();
+
+        res.status(201).json({ 
+            message: 'Event created successfully', 
+            eventId: eventId 
+        });
     } catch (error) {
+        await connection.rollback();
         console.error('Error creating event:', error);
         res.status(500).json({ message: 'Error creating event' });
+    } finally {
+        connection.release();
     }
 }
 
@@ -107,10 +119,36 @@ async function getClientBookings(req, res) {
     }
 }
 
+async function getEventPayment(req, res) {
+    try {
+        const eventId = req.params.eventId;
+        const connection = await pool.getConnection();
+        
+        try {
+            const [rows] = await connection.execute(
+                'SELECT Payment FROM event_payment WHERE Event_Id = ?',
+                [eventId]
+            );
+            
+            if (rows.length > 0) {
+                res.json({ payment: rows[0].Payment });
+            } else {
+                res.status(404).json({ message: 'Event payment not found' });
+            }
+        } finally {
+            connection.release();
+        }
+    } catch (error) {
+        console.error('Error fetching event payment:', error);
+        res.status(500).json({ message: 'Error fetching event payment' });
+    }
+}
+
 module.exports = {
     getAllEvents,
     createEvent,
     updateEventStatus,
     createNewEvent,
-    getClientBookings
+    getClientBookings,
+    getEventPayment
 }; 

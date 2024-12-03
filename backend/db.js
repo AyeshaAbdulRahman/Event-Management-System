@@ -140,6 +140,15 @@ async function initializeDatabase() {
                 )
             `);
 
+            // Add this to your initializeDatabase function
+            await connection.execute(`
+                CREATE TABLE IF NOT EXISTS event_payment (
+                    Event_Id INT PRIMARY KEY,
+                    Payment DECIMAL(10,2) NOT NULL,
+                    FOREIGN KEY (Event_Id) REFERENCES events(Event_Id)
+                )
+            `);
+
             console.log('Database initialized successfully');
         } finally {
             connection.release();

@@ -73,8 +73,13 @@
                 const response = await fetch(`http://localhost:5000/api/participants/${participantId}`);
                 const data = await response.json();
                 
+                // Get event payment amount
+                const paymentResponse = await fetch(`http://localhost:5000/api/events/${data.Event_Id}/payment`);
+                const paymentData = await paymentResponse.json();
+                
                 document.getElementById('participantName').textContent = `Participant: ${data.Participant_Name}`;
                 document.getElementById('eventName').textContent = `Event: ${data.Event_Name}`;
+                document.getElementById('amount').value = paymentData.payment.toFixed(2);
             } catch (error) {
                 console.error('Error:', error);
                 alert('Error loading participant information');
