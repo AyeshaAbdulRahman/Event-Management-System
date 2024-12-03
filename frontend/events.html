@@ -43,36 +43,7 @@
     </div>
 
     <!-- Event Request Modal -->
-    <div id="eventRequestModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeRequestEventModal()">&times;</span>
-            <h2>Request New Event</h2>
-            <form id="eventRequestForm">
-                <div class="form-group">
-                    <label for="eventTitle">Event Title</label>
-                    <input type="text" id="eventTitle" required>
-                </div>
-                <div class="form-group">
-                    <label for="eventDate">Event Date</label>
-                    <input type="date" id="eventDate" required>
-                </div>
-                <div class="form-group">
-                    <label for="eventType">Event Type</label>
-                    <select id="eventType" required>
-                        <option value="wedding">Wedding</option>
-                        <option value="birthday">Birthday</option>
-                        <option value="corporate">Corporate Event</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="eventDescription">Description</label>
-                    <textarea id="eventDescription" rows="4" required></textarea>
-                </div>
-                <button type="submit" class="submit-btn">Submit Request</button>
-            </form>
-        </div>
-    </div>
+    
 
     <script>
         // Navigation functions
@@ -104,24 +75,32 @@
         }
 
         // Event handling functions
-        function loadEvents() {
-            fetch('http://localhost:5000/api/events')
-                .then(response => response.json())
-                .then(events => {
-                    const eventsGrid = document.getElementById('eventsGrid');
-                    eventsGrid.innerHTML = events.map(event => `
+        async function loadEvents() {
+            try {
+                const response = await fetch('http://localhost:5000/api/events');
+                const events = await response.json();
+                console.log('Events data:', events);
+                
+                const eventsGrid = document.getElementById('eventsGrid');
+                eventsGrid.innerHTML = events.map(event => {
+                    console.log('Processing event:', event);
+                    return `
                         <div class="event-card">
-                            <h3>${event.Event_Name}</h3>
-                            <p class="event-date">${new Date(event.Date).toLocaleDateString()}</p>
-                            <p class="event-type">Type: ${event.Event_Type}</p>
+                            <h3>${event.Event_Name || 'Unnamed Event'}</h3>
                             <div class="event-details">
-                                <p class="venue-info">Venue: ${event.Venue_Name}, ${event.City}</p>
-                                <p class="organizer-info">Organizer: ${event.First_Name} ${event.Last_Name}</p>
+                                <p><i class="fas fa-calendar"></i> ${event.Date ? new Date(event.Date).toLocaleDateString() : 'Date not set'}</p>
+                                <p><i class="fas fa-tag"></i> ${event.Event_Type || 'Type not specified'}</p>
+                                <p><i class="fas fa-map-marker-alt"></i> ${event.Venue_Name || 'No venue'}, ${event.Venue_City || 'No city'}</p>
+                                <p><i class="fas fa-user"></i> Organizer: ${event.Organizer_Name || 'Not assigned'}</p>
                             </div>
                         </div>
-                    `).join('');
-                })
-                .catch(error => console.error('Error loading events:', error));
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error('Error loading events:', error);
+                alert('Failed to load events');
+            }
         }
 
         // Modal functions
@@ -129,42 +108,8 @@
             window.location.href = 'createevent.html';
         }
 
-        function closeRequestEventModal() {
-            document.getElementById('eventRequestModal').style.display = 'none';
-        }
-
         // Form submission
-        document.getElementById('eventRequestForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = {
-                title: document.getElementById('eventTitle').value,
-                date: document.getElementById('eventDate').value,
-                type: document.getElementById('eventType').value,
-                description: document.getElementById('eventDescription').value,
-                status: 'pending'
-            };
 
-            try {
-                const response = await fetch('http://localhost:5000/api/events', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                if (response.ok) {
-                    alert('Event request submitted successfully!');
-                    closeRequestEventModal();
-                    loadEvents(); // Reload events list
-                } else {
-                    alert('Failed to submit event request');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred while submitting the request');
-            }
-        });
 
         // Add this function at the beginning of your script section
         function checkUserRole() {

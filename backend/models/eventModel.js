@@ -6,9 +6,19 @@ async function getAllEvents() {
     const connection = await pool.getConnection();
     try {
         const [rows] = await connection.execute(`
-            SELECT e.Event_Id, e.Event_Name, e.Event_Type, e.Date, c.Client_Id
-            FROM Events e
-            JOIN Clients c ON e.Client_Id = c.Client_Id`);
+            SELECT e.Event_Id,
+                    e.Event_Name,
+                    e.Event_Type,
+                    e.Date,
+                    v.Venue_Name,
+                    v.City as Venue_City,
+                    c.Client_Id,
+                    CONCAT(u.First_Name, ' ', u.Last_Name) as Organizer_Name
+                FROM events e
+                JOIN venues v ON e.Venue_Id = v.Venue_Id
+                JOIN clients c ON e.Client_Id = c.Client_Id
+                JOIN users u ON c.User_Id = u.User_Id
+                ORDER BY e.Date DESC`);
         return rows;
     } finally {
         connection.release();

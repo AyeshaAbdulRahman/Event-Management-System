@@ -7,13 +7,20 @@ async function getAllEvents(req, res) {
         try {
             const [events] = await connection.execute(`
                 SELECT 
-                    Event_Id,
-                    Event_Name,
-                    Event_Type,
-                    Date,
-                    Venue_Id
-                FROM events
-                ORDER BY Date DESC
+                    e.Event_Id,
+                    e.Event_Name,
+                    e.Event_Type,
+                    e.Date,
+                    v.Venue_Name,
+                    v.City as Venue_City,
+                    u.First_Name,
+                    u.Last_Name,
+                    CONCAT(u.First_Name, ' ', u.Last_Name) as Organizer_Name
+                FROM events e
+                LEFT JOIN venues v ON e.Venue_Id = v.Venue_Id
+                LEFT JOIN clients c ON e.Client_Id = c.Client_Id
+                LEFT JOIN users u ON c.User_Id = u.User_Id
+                ORDER BY e.Date DESC
             `);
             
             console.log('Events being sent:', events);
@@ -102,9 +109,12 @@ async function getClientBookings(req, res) {
                     e.Event_Type,
                     e.Date,
                     v.Venue_Name,
-                    v.City
+                    v.City as Venue_City,
+                    CONCAT(u.First_Name, ' ', u.Last_Name) as Organizer_Name
                 FROM events e
                 JOIN venues v ON e.Venue_Id = v.Venue_Id
+                JOIN clients c ON e.Client_Id = c.Client_Id
+                JOIN users u ON c.User_Id = u.User_Id
                 WHERE e.Client_Id = ?
                 ORDER BY e.Date DESC
             `, [clientId]);

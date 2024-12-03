@@ -149,6 +149,18 @@ async function initializeDatabase() {
                 )
             `);
 
+            // Add this to your initializeDatabase function after the events and teams tables are created
+            await connection.execute(`
+                CREATE TABLE IF NOT EXISTS tasks (
+                    Task_Id INT AUTO_INCREMENT PRIMARY KEY,
+                    Task_Name VARCHAR(200) NOT NULL,
+                    Event_Id INT,
+                    Team_Id INT,
+                    FOREIGN KEY (Event_Id) REFERENCES events(Event_Id),
+                    FOREIGN KEY (Team_Id) REFERENCES teams(Team_Id)
+                )
+            `);
+
             console.log('Database initialized successfully');
         } finally {
             connection.release();
