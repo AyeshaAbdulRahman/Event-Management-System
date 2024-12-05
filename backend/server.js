@@ -16,11 +16,7 @@ const port = process.env.PORT || 5000;
 
 // CORS configuration
 const corsOptions = {
-    origin: [
-        'http://127.0.0.1:5500', 
-        'http://localhost:5500', 
-        'https://taqreeb-frnt.vercel.app'
-    ],
+    origin: 'https://taqreeb-frnt.vercel.app',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin'],
     credentials: true,
@@ -30,21 +26,6 @@ const corsOptions = {
 // Middleware
 app.use(cors(corsOptions));
 app.use(express.json());
-
-// Add this before your routes
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'https://taqreeb-frnt.vercel.app');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-    
-    // Handle preflight requests
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
-    }
-    
-    next();
-});
 
 // Initialize database connection
 async function startServer() {
@@ -179,6 +160,12 @@ async function startServer() {
         app.get('https://taqreeb-blue.vercel.app/api/employee/tasks/:userId', taskController.getEmployeeTeamTasks);
         app.get('https://taqreeb-blue.vercel.app/api/events/:eventId/tasks', taskController.getEventTasks);
         app.get('https://taqreeb-blue.vercel.app/api/employee/info/:userId', employeeController.getEmployeeInfo);
+
+        app.options('/api/auth/login', cors(corsOptions)); // Enable pre-flight for this specific route
+
+        app.get('/api/test', (req, res) => {
+            res.json({ message: 'CORS test successful' });
+        });
 
         app.listen(port, () => {
             console.log(`Server is running on port ${port}`);
