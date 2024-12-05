@@ -33,6 +33,23 @@
         .add-vendors-btn i {
             margin-right: 8px;
         }
+
+        .event-stats {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .event-stats p {
+            color: #13b874;
+            font-weight: 500;
+            margin: 0.5rem 0;
+        }
+
+        .event-stats i {
+            width: 20px;
+            margin-right: 8px;
+        }
     </style>
 </head>
 <body style="background-color: #3b306c; color: white;">
@@ -46,12 +63,8 @@
                     <i class="fas fa-bars"></i>
                 </button>
                 <ul class="nav-links">
-                    <div class="nav-links-main">
-                        <li><a href="#" onclick="redirectToDashboard(event)">Dashboard</a></li>
-                        <li><a href="my_bookings.html">My Bookings</a></li>
-                        <li><a href="events.html">Events</a></li>
-                        <li><a href="vendors.html">Vendors</a></li>
-                        <li><a href="venues.html">Venues</a></li>
+                    <div class="nav-links-main" id="navLinksMain">
+                        <!-- Navigation links will be dynamically inserted here -->
                     </div>
                     <div class="nav-links-bottom">
                         <li><a href="profiles.html">Profile</a></li>
@@ -63,67 +76,81 @@
     </header>
 
     <div class="dashboard-container">
-        <div class="bookings-container">
-            <h2 class="section-title">My Bookings</h2>
-            <div class="bookings-grid" id="bookingsGrid">
-                <!-- Bookings will be loaded here -->
-            </div>
-            <div id="eventModal" class="modal">
-                <div class="modal-content booking-details-modal">
-                    <span class="close-modal" onclick="closeEventModal()">&times;</span>
-                    <div id="modalContent">
-                        <!-- Modal content will be loaded here -->
-                    </div>
-                </div>
+        <div id="eventsContainer" class="events-grid">
+            <!-- Events will be loaded here -->
+        </div>
+    </div>
+
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeEventModal()">&times;</span>
+            <h2 id="modalEventTitle"></h2>
+            <div id="modalTasksContainer" class="tasks-grid">
+                <!-- Tasks will be loaded here -->
             </div>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', async function() {
-            const userRole = localStorage.getItem('userRole');
-            if (userRole !== 'client') {
-                window.location.href = 'login.html';
-                return;
-            }
-            
-            const clientId = localStorage.getItem('clientId');
-            if (!clientId) {
-                alert('Please log in to view your bookings');
-                window.location.href = 'login.html';
-                return;
-            }
+        let currentEventId = null;
 
+        async function loadMyEvents() {
             try {
+                const clientId = localStorage.getItem('clientId');
                 const response = await fetch(`http://localhost:5000/api/bookings/${clientId}`);
-                const bookings = await response.json();
+                const events = await response.json();
                 
-                const bookingsGrid = document.getElementById('bookingsGrid');
-                bookingsGrid.innerHTML = bookings.map(booking => `
-                    <div class="booking-card" onclick="showEventDetails(${JSON.stringify(booking).replace(/"/g, '&quot;')})">
-                        <h3>${booking.Event_Name}</h3>
-                        <div class="booking-info">
-                            <p class="booking-date">Date: ${new Date(booking.Date).toLocaleDateString('en-US', {
-                                weekday: 'long',
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                            })}</p>
-                            <p class="booking-type">Event Type: ${booking.Event_Type}</p>
-                            <div class="booking-venue">
-                                <p>Venue: ${booking.Venue_Name}</p>
-                                <p>Location: ${booking.City}</p>
+                const container = document.getElementById('eventsContainer');
+                
+                if (events.length === 0) {
+                    container.innerHTML = '<p class="no-events">No bookings found</p>';
+                    return;
+                }
+
+                container.innerHTML = events.map(event => `
+                    <div class="event-card">
+                        <h3>${event.Event_Name}</h3>
+                        <div class="event-details">
+                            <p><i class="fas fa-calendar"></i> ${new Date(event.Date).toLocaleDateString()}</p>
+                            <p><i class="fas fa-tag"></i> ${event.Event_Type}</p>
+                            <p><i class="fas fa-map-marker-alt"></i> ${event.Venue_Name}, ${event.City}</p>
+                            <div class="event-stats">
+                                <p><i class="fas fa-users"></i> ${event.Participant_Count} Participants</p>
+                                <p><i class="fas fa-dollar-sign"></i> Total Revenue: $${parseFloat(event.Total_Payments).toFixed(2)}</p>
                             </div>
                         </div>
                     </div>
                 `).join('');
+
             } catch (error) {
-                console.error('Error loading bookings:', error);
-                alert('Failed to load bookings');
+                console.error('Error loading events:', error);
+                container.innerHTML = '<p class="error-message">Error loading events</p>';
             }
+        }
+
+        function updateNavigation() {
+            const userRole = localStorage.getItem('userRole');
+            const navLinksMain = document.getElementById('navLinksMain');
+            
+            if (userRole === 'client') {
+                navLinksMain.innerHTML = `
+                    <li><a href="#" onclick="redirectToDashboard(event)">Dashboard</a></li>
+                    <li><a href="my_bookings.html" class="active">My Bookings</a></li>
+                    <li><a href="events.html">Events</a></li>
+                    <li><a href="vendors.html">Vendors</a></li>
+                    <li><a href="venues.html">Venues</a></li>
+                `;
+            } else {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            updateNavigation();
+            loadMyEvents();
         });
 
-        // Navigation functions
         function toggleMenu() {
             const navLinks = document.querySelector('.nav-links');
             const dashboardContainer = document.querySelector('.dashboard-container');
@@ -148,87 +175,6 @@
                 window.location.href = 'customer-dashboard.html';
             } else if (userRole === 'employee') {
                 window.location.href = 'employee-dashboard.html';
-            }
-        }
-
-        // Update the showEventDetails function to move the button inside the content
-        let currentEventId = null;
-
-        async function showEventDetails(booking) {
-            currentEventId = booking.Event_Id;
-            const modal = document.getElementById('eventModal');
-            const modalContent = document.getElementById('modalContent');
-            
-            try {
-                const suppliesResponse = await fetch(`http://localhost:5000/api/events/${booking.Event_Id}/supplies`);
-                const supplies = await suppliesResponse.json();
-
-                modalContent.innerHTML = `
-                    <div class="modal-event-details">
-                        <h2>${booking.Event_Name}</h2>
-                        <div class="event-info">
-                            <div class="info-section">
-                                <h3><i class="fas fa-calendar-alt"></i> Event Details</h3>
-                                <p><strong>Date:</strong> ${new Date(booking.Date).toLocaleDateString('en-US', {
-                                    weekday: 'long',
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric'
-                                })}</p>
-                                <p><strong>Type:</strong> ${booking.Event_Type}</p>
-                            </div>
-                            <div class="info-section">
-                                <h3><i class="fas fa-map-marker-alt"></i> Venue Information</h3>
-                                <p><strong>Venue:</strong> ${booking.Venue_Name}</p>
-                                <p><strong>Location:</strong> ${booking.City}</p>
-                            </div>
-                        </div>
-                        <div class="supplies-section">
-                            <h3><i class="fas fa-box-open"></i> Items Booked</h3>
-                            ${supplies.length === 0 
-                                ? '<p class="no-items">No items booked yet</p>'
-                                : `<div class="supplies-list">
-                                    ${supplies.map(supply => `
-                                        <div class="supply-item">
-                                            <span class="item-name">${supply.Item_Name}</span>
-                                            <span class="vendor-name">by ${supply.Vendor_Name}</span>
-                                        </div>
-                                    `).join('')}
-                                </div>`
-                            }
-                        </div>
-                    </div>
-                    <button class="add-vendors-btn" onclick="addVendors()">
-                        <i class="fas fa-plus"></i> Add Vendors
-                    </button>
-                `;
-            } catch (error) {
-                console.error('Error loading event details:', error);
-                alert('Failed to load event details');
-            }
-            
-            modal.style.display = 'block';
-        }
-
-        function closeEventModal() {
-            const modal = document.getElementById('eventModal');
-            modal.style.display = 'none';
-        }
-
-        // Update the addVendors function
-        function addVendors() {
-            if (currentEventId) {
-                window.location.href = `vendor_selector.html?eventId=${currentEventId}`;
-            } else {
-                alert('Error: No event selected');
-            }
-        }
-
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const modal = document.getElementById('eventModal');
-            if (event.target === modal) {
-                modal.style.display = 'none';
             }
         }
     </script>

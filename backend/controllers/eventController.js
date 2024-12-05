@@ -126,12 +126,17 @@ async function getClientBookings(req, res) {
                     e.Date,
                     v.Venue_Name,
                     v.City,
-                    CONCAT(u.First_Name, ' ', u.Last_Name) as Organizer_Name
+                    CONCAT(u.First_Name, ' ', u.Last_Name) as Organizer_Name,
+                    COUNT(DISTINCT p.Participant_Id) as Participant_Count,
+                    COALESCE(SUM(pay.Amount), 0) as Total_Payments
                 FROM events e
                 JOIN venues v ON e.Venue_Id = v.Venue_Id
                 JOIN clients c ON e.Client_Id = c.Client_Id
                 JOIN users u ON c.User_Id = u.User_Id
+                LEFT JOIN participants p ON e.Event_Id = p.Event_Id
+                LEFT JOIN payments pay ON p.Participant_Id = pay.Participant_Id
                 WHERE e.Client_Id = ?
+                GROUP BY e.Event_Id
                 ORDER BY e.Date DESC
             `, [clientId]);
             
