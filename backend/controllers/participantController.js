@@ -1,4 +1,5 @@
 const Participant = require('../models/participantModel');
+const { pool } = require('../db');
 
 async function createParticipant(req, res) {
     console.log('Received request body:', req.body);
@@ -57,16 +58,48 @@ async function getAllParticipants(req, res) {
 async function getParticipantById(req, res) {
     try {
         const participantId = req.params.participantId;
-        const participant = await Participant.getParticipantById(participantId);
+        console.log('Fetching participant with ID:', participantId);
+
+        const connection = await pool.getConnection();
         
-        if (participant) {
-            res.json(participant);
-        } else {
-            res.status(404).json({ message: 'Participant not found' });
+        try {
+            const [rows] = await connection.execute(`
+                SELECT 
+                    p.Participant_Id,
+                    p.Participant_Name,
+                    e.Event_Id,
+                    e.Event_Name,
+                    ep.Payment as Event_Payment
+                FROM participants p
+                JOIN events e ON p.Event_Id = e.Event_Id
+                JOIN event_payment ep ON e.Event_Id = ep.Event_Id
+                WHERE p.Participant_Id = ?
+            `, [participantId]);
+            
+            console.log('Query result:', rows);
+            
+            if (rows.length === 0) {
+                console.log('No participant found with ID:', participantId);
+                return res.status(404).json({ 
+                    message: 'Participant not found',
+                    participantId: participantId
+                });
+            }
+            
+            console.log('Participant data with payment:', rows[0]);
+            res.json(rows[0]);
+        } catch (dbError) {
+            console.error('Database error:', dbError);
+            throw dbError;
+        } finally {
+            connection.release();
         }
     } catch (error) {
-        console.error('Error fetching participant:', error);
-        res.status(500).json({ message: 'Error fetching participant' });
+        console.error('Error in getParticipantById:', error);
+        res.status(500).json({ 
+            message: 'Error fetching participant',
+            error: error.message
+        });
     }
 }
 

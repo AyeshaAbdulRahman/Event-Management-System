@@ -70,24 +70,45 @@
 
         async function loadParticipantInfo() {
             try {
+                console.log('Loading info for participant:', participantId);
+                
                 const response = await fetch(`http://localhost:5000/api/participants/${participantId}`);
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`Failed to fetch participant information: ${errorData.message || response.statusText}`);
+                }
+                
                 const data = await response.json();
+                console.log('Participant data:', data);
                 
-                // Get event payment amount
-                const paymentResponse = await fetch(`http://localhost:5000/api/events/${data.Event_Id}/payment`);
-                const paymentData = await paymentResponse.json();
+                if (!data.Participant_Name || !data.Event_Name || data.Event_Payment === undefined) {
+                    throw new Error('Incomplete participant data received');
+                }
                 
+                // Update the UI
                 document.getElementById('participantName').textContent = `Participant: ${data.Participant_Name}`;
                 document.getElementById('eventName').textContent = `Event: ${data.Event_Name}`;
-                document.getElementById('amount').value = paymentData.payment.toFixed(2);
+                // Convert the payment to a number before using toFixed
+                const paymentAmount = parseFloat(data.Event_Payment);
+                document.getElementById('amount').value = paymentAmount.toFixed(2);
+                
             } catch (error) {
-                console.error('Error:', error);
-                alert('Error loading participant information');
+                console.error('Error loading participant info:', error);
+                alert('Error loading participant information: ' + error.message);
             }
         }
 
         async function processPayment() {
             try {
+                const amountInput = document.getElementById('amount');
+                const amount = parseFloat(amountInput.value);
+
+                if (isNaN(amount) || amount <= 0) {
+                    throw new Error('Invalid payment amount');
+                }
+
                 const response = await fetch('http://localhost:5000/api/payments/create', {
                     method: 'POST',
                     headers: {
@@ -95,20 +116,19 @@
                     },
                     body: JSON.stringify({
                         participantId: participantId,
-                        amount: 500.00
+                        amount: amount
                     })
                 });
 
-                if (response.ok) {
-                    alert('Payment processed successfully!');
-                    window.location.href = 'registration.html';
-                } else {
-                    const data = await response.json();
-                    alert(data.message || 'Failed to process payment');
+                if (!response.ok) {
+                    throw new Error('Payment processing failed');
                 }
+
+         
+                window.location.href = 'registration.html';
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error processing payment');
+                alert('Error processing payment: ' + error.message);
             }
         }
 
@@ -123,7 +143,49 @@
             loadParticipantInfo();
         });
 
-        // Your existing navigation functions...
+        function updateNavigation() {
+            const userRole = localStorage.getItem('userRole');
+            const navLinksMain = document.getElementById('navLinksMain');
+            
+            if (userRole === 'employee') {
+                navLinksMain.innerHTML = `
+                    <li><a href="#" onclick="redirectToDashboard(event)">Dashboard</a></li>
+                    <li><a href="team.html">My Team</a></li>
+                    <li><a href="events.html">Events</a></li>
+                    <li><a href="tasks.html">Tasks</a></li>
+                    <li><a href="registration.html" class="active">Registration</a></li>
+                `;
+            } else {
+                window.location.href = 'login.html';
+            }
+        }
+
+        function toggleMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            const dashboardContainer = document.querySelector('.dashboard-container');
+            navLinks.classList.toggle('show');
+            dashboardContainer.classList.toggle('shift-left');
+            event.stopPropagation();
+        }
+
+        document.addEventListener('click', function(event) {
+            const navLinks = document.querySelector('.nav-links');
+            const dashboardContainer = document.querySelector('.dashboard-container');
+            if (!event.target.closest('.nav-right') && navLinks.classList.contains('show')) {
+                navLinks.classList.remove('show');
+                dashboardContainer.classList.remove('shift-left');
+            }
+        });
+
+        function redirectToDashboard(event) {
+            event.preventDefault();
+            const userRole = localStorage.getItem('userRole');
+            if (userRole === 'client') {
+                window.location.href = 'customer-dashboard.html';
+            } else if (userRole === 'employee') {
+                window.location.href = 'employee-dashboard.html';
+            }
+        }
     </script>
 </body>
 </html> 
