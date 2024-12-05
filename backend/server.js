@@ -16,16 +16,33 @@ const port = process.env.PORT || 5000;
 
 // CORS configuration
 const corsOptions = {
-    origin: ['http://127.0.0.1:5500', 'http://localhost:5500'],
+    origin: [
+        'http://127.0.0.1:5500', 
+        'http://localhost:5500', 
+        'https://taqreeb-blue.vercel.app',
+        'https://taqreeb-frnt.vercel.app'
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
     credentials: true,  
-  optionsSuccessStatus: 200
+    optionsSuccessStatus: 200
 };
 
 // Middleware
 app.use(cors(corsOptions));
 app.use(express.json());
+
+// Add this before your routes
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'https://taqreeb-frnt.vercel.app');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(200);
+    }
+    next();
+});
 
 // Initialize database connection
 async function startServer() {
@@ -34,7 +51,7 @@ async function startServer() {
         await initializeDatabase();
 
         // Register endpoint
-        app.post('https://taqreeb-blue.vercel.app/api/register', async (req, res) => {
+        app.post('/api/auth/register', async (req, res) => {
             console.log('Received registration request:', req.body);
             
             try {
@@ -82,7 +99,7 @@ async function startServer() {
         });
 
         // Login endpoint
-        app.post('https://taqreeb-blue.vercel.app/api/login', async (req, res) => {
+        app.post('/api/auth/login', async (req, res) => {
             console.log('Received login request:', req.body);
             
             try {
