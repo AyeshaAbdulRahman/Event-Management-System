@@ -116,6 +116,7 @@ async function getClientBookings(req, res) {
     try {
         const clientId = req.params.clientId;
         const connection = await pool.getConnection();
+        
         try {
             const [bookings] = await connection.execute(`
                 SELECT 
@@ -124,7 +125,7 @@ async function getClientBookings(req, res) {
                     e.Event_Type,
                     e.Date,
                     v.Venue_Name,
-                    v.City as Venue_City,
+                    v.City,
                     CONCAT(u.First_Name, ' ', u.Last_Name) as Organizer_Name
                 FROM events e
                 JOIN venues v ON e.Venue_Id = v.Venue_Id
