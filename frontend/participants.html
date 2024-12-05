@@ -153,7 +153,6 @@
                 console.log('Response data:', data);
 
                 if (response.ok) {
-                    alert('Participant registered successfully!');
                     window.location.href = 'registration.html';
                 } else {
                     alert(data.message || 'Failed to register participant');

@@ -2075,7 +2075,7 @@ header {
 
 .item-select-card.selected {
     border-color: #13b874;
-    background-color: rgba(19, 184, 116, 0.1);
+    background-color: rgb(248, 248, 248);
 }
 
 .item-select-card h4 {

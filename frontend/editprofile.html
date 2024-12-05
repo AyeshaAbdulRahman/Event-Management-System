@@ -134,7 +134,6 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    alert('Profile updated successfully!');
                     window.location.href = 'profiles.html';
                 } else {
                     alert(data.message || 'Failed to update profile');
