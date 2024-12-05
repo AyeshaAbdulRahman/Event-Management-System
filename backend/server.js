@@ -19,12 +19,11 @@ const corsOptions = {
     origin: [
         'http://127.0.0.1:5500', 
         'http://localhost:5500', 
-        'https://taqreeb-blue.vercel.app',
         'https://taqreeb-frnt.vercel.app'
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
-    credentials: true,  
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin'],
+    credentials: true,
     optionsSuccessStatus: 200
 };
 
@@ -35,12 +34,15 @@ app.use(express.json());
 // Add this before your routes
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', 'https://taqreeb-frnt.vercel.app');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept');
     res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    
+    // Handle preflight requests
     if (req.method === 'OPTIONS') {
-        return res.sendStatus(200);
+        return res.status(200).end();
     }
+    
     next();
 });
 

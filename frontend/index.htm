@@ -46,7 +46,10 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Origin': 'https://taqreeb-frnt.vercel.app'
                     },
+                    credentials: 'include',
                     body: JSON.stringify(formData)
                 });
 
