@@ -12,7 +12,7 @@
     ],
     "routes": [
       {
-        "src": "/api/(.*)",
+        "src": "https://taqreeb-blue.vercel.app/api/(.*)",
         "dest": "backend/server.js"
       },
       {

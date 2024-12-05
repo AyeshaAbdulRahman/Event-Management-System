@@ -71,7 +71,7 @@
 
             try {
                 const userId = localStorage.getItem('userId');
-                const response = await fetch(`/api/employee/team/${userId}`);
+                const response = await fetch(`https://taqreeb-blue.vercel.app/api/employee/team/${userId}`);
                 const data = await response.json();
                 
                 if (response.ok) {

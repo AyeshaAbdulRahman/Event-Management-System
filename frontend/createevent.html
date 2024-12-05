@@ -85,7 +85,7 @@
         // Load venues when page loads
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                const response = await fetch('/api/venues');
+                const response = await fetch('https://taqreeb-blue.vercel.app/api/venues');
                 const venues = await response.json();
                 
                 const venueSelect = document.getElementById('venue');
@@ -121,7 +121,7 @@
             };
 
             try {
-                const response = await fetch('/api/events/create', {
+                const response = await fetch('https://taqreeb-blue.vercel.app/api/events/create', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

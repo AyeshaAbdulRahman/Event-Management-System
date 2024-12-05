@@ -96,7 +96,7 @@
 
         async function loadVendors() {
             try {
-                const response = await fetch('/api/vendors');
+                const response = await fetch('https://taqreeb-blue.vercel.app/api/vendors');
                 const vendors = await response.json();
                 
                 const vendorsGrid = document.getElementById('vendorsGrid');
@@ -118,7 +118,7 @@
             selectedItems.clear();
             
             try {
-                const response = await fetch(`/api/vendors/${vendorId}/items`);
+                const response = await fetch(`https://taqreeb-blue.vercel.app/api/vendors/${vendorId}/items`);
                 const items = await response.json();
                 
                 const itemSelection = document.getElementById('itemSelection');
@@ -158,7 +158,7 @@
 
             try {
                 // Get the item names for the selected IDs
-                const response = await fetch(`/api/vendors/${selectedVendorId}/items`);
+                const response = await fetch(`https://taqreeb-blue.vercel.app/api/vendors/${selectedVendorId}/items`);
                 const items = await response.json();
                 
                 // Create a map of ID to name
@@ -167,7 +167,7 @@
                 // Convert selected IDs to names
                 const selectedItemNames = Array.from(selectedItems).map(id => itemMap.get(id));
 
-                const response2 = await fetch('/api/supplies/create', {
+                const response2 = await fetch('https://taqreeb-blue.vercel.app/api/supplies/create', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
