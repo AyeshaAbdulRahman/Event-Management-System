@@ -123,7 +123,7 @@
                     throw new Error('No user ID found in localStorage');
                 }
 
-                const response = await fetch(`http://localhost:5000/api/employee/info/${userId}`);
+                const response = await fetch(`/api/employee/info/${userId}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -145,7 +145,7 @@
 
                 // Load task count with better error handling
                 try {
-                    const tasksResponse = await fetch(`http://localhost:5000/api/employee/tasks/${userId}`);
+                    const tasksResponse = await fetch(`/api/employee/tasks/${userId}`);
                     if (!tasksResponse.ok) {
                         throw new Error(`HTTP error! status: ${tasksResponse.status}`);
                     }

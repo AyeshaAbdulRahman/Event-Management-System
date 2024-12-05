@@ -9,10 +9,26 @@ async function createPool() {
             user: process.env.MYSQL_USER,
             password: process.env.MYSQL_PASSWORD,
             database: process.env.MYSQL_DATABASE,
+            port: process.env.MYSQL_PORT,
             waitForConnections: true,
             connectionLimit: 10,
-            queueLimit: 0
+            queueLimit: 0,
+            connectTimeout: 60000,
+            acquireTimeout: 60000,
+            timeout: 60000,
+            ssl: {
+                rejectUnauthorized: false
+            }
         });
+
+        try {
+            const connection = await pool.getConnection();
+            console.log('Database connection established successfully');
+            connection.release();
+        } catch (error) {
+            console.error('Error establishing database connection:', error);
+            throw error;
+        }
     }
     return pool;
 }

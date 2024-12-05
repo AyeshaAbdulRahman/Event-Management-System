@@ -67,7 +67,7 @@
             };
 
             try {
-                const response = await fetch('http://localhost:5000/api/register', {
+                const response = await fetch('/api/auth/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -78,7 +78,6 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    alert('Registration successful!');
                     window.location.href = 'login.html';
                 } else {
                     alert(data.message || 'Registration failed');

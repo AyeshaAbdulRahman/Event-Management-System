@@ -47,7 +47,7 @@
         async function loadTasks() {
             try {
                 const userId = localStorage.getItem('userId');
-                const response = await fetch(`http://localhost:5000/api/employee/tasks/${userId}`);
+                const response = await fetch(`/api/employee/tasks/${userId}`);
                 const tasks = await response.json();
                 
                 console.log('Tasks:', tasks); // Debug log

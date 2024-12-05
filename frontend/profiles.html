@@ -77,7 +77,7 @@
             }
 
             try {
-                const response = await fetch(`http://localhost:5000/api/profile/${userId}`);
+                const response = await fetch(`/api/profile/${userId}`);
                 const profile = await response.json();
                 
                 const profileDetails = document.getElementById('profileDetails');

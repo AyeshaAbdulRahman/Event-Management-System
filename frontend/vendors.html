@@ -54,7 +54,7 @@
 
         async function loadVendors() {
             try {
-                const response = await fetch('http://localhost:5000/api/vendors');
+                const response = await fetch('/api/vendors');
                 const vendors = await response.json();
                 
                 const vendorsGrid = document.getElementById('vendorsGrid');
@@ -73,7 +73,7 @@
 
         async function showVendorDetails(vendorId, vendorName) {
             try {
-                const response = await fetch(`http://localhost:5000/api/vendors/${vendorId}/supplies`);
+                const response = await fetch(`/api/vendors/${vendorId}/supplies`);
                 const supplies = await response.json();
                 
                 const modal = document.getElementById('vendorModal');

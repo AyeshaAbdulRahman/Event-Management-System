@@ -77,7 +77,7 @@
 
         async function loadVenues() {
             try {
-                const response = await fetch('http://localhost:5000/api/venues');
+                const response = await fetch('/api/venues');
                 const venues = await response.json();
                 
                 const venuesGrid = document.getElementById('venuesGrid');
