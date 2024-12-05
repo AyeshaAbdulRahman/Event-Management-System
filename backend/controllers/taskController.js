@@ -28,6 +28,18 @@ async function getEmployeeTeamTasks(req, res) {
     }
 }
 
+async function getEventTasks(req, res) {
+    try {
+        const eventId = req.params.eventId;
+        const tasks = await Task.getEventTasks(eventId);
+        res.json(tasks);
+    } catch (error) {
+        console.error('Error fetching event tasks:', error);
+        res.status(500).json({ message: 'Error fetching tasks' });
+    }
+}
+
 module.exports = {
-    getEmployeeTeamTasks
+    getEmployeeTeamTasks,
+    getEventTasks
 }; 

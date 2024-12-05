@@ -109,7 +109,28 @@ async function getTasksByTeam(teamId) {
     }
 }
 
+async function getEventTasks(eventId) {
+    const connection = await pool.getConnection();
+    try {
+        const [rows] = await connection.execute(`
+            SELECT 
+                t.Task_Id,
+                t.Task_Name,
+                t.Event_Id,
+                tm.Team_Name
+            FROM tasks t
+            JOIN teams tm ON t.Team_Id = tm.Team_Id
+            WHERE t.Event_Id = ?
+            ORDER BY tm.Team_Name
+        `, [eventId]);
+        return rows;
+    } finally {
+        connection.release();
+    }
+}
+
 module.exports = {
     createTasksForEvent,
-    getTasksByTeam
+    getTasksByTeam,
+    getEventTasks
 }; 

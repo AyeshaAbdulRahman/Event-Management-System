@@ -6,6 +6,145 @@
     <title>Customer Dashboard - Taqreeb</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="./css/styles.css">
+    <style>
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        .event-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            color: #3b306c;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .event-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #3b306c;
+        }
+
+        .event-details {
+            display: grid;
+            gap: 0.8rem;
+        }
+
+        .event-details p {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #666;
+        }
+
+        .event-details i {
+            color: #13b874;
+            width: 20px;
+        }
+
+        .no-events {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            grid-column: 1 / -1;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            border-radius: 10px;
+            color: #3b306c;
+            overflow-y: auto;
+        }
+
+        .close-modal {
+            position: fixed;
+            right: calc(5% + 1.5rem);
+            top: calc(5% + 1.5rem);
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            background: white;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 3;
+        }
+
+        .tasks-grid {
+            display: grid;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding: 0 0.5rem 1rem 0.5rem;
+        }
+
+        .team-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .team-title {
+            color: #13b874;
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e6e6fa;
+        }
+
+        .task-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #13b874;
+        }
+
+        #modalEventTitle {
+            position: sticky;
+            top: 0;
+            background: white;
+            padding: 1.5rem 2rem;
+            margin: -2rem -2rem 0 -2rem;
+            border-bottom: 1px solid #e6e6fa;
+            z-index: 2;
+        }
+
+        .tasks-grid p {
+            text-align: center;
+            padding: 2rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
 </head>
 <body style="background-color: #3b306c; color: white;">
     <header>
@@ -30,79 +169,73 @@
         </nav>
     </header>
 
-    <div class="dashboard-container" style="padding: 2rem;">  
-        <div class="dashboard-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
-            <div class="dashboard-card" style="background: white; padding: 2rem; border-radius: 10px; color: #3b306c;">
-                <h3>Pending Events</h3>
-                <p>5 events need attention</p>
-                <button class="cta-button">View Events</button>
-            </div>
+    <div class="dashboard-container">
+        <h2 class="section-title" style="padding: 2rem 2rem 0 2rem;">My Events</h2>
+        <div class="events-grid" id="eventsContainer">
+            <!-- Events will be loaded here -->
+        </div>
+    </div>
 
-            <div class="dashboard-card" style="background: white; padding: 2rem; border-radius: 10px; color: #3b306c;">
-                <h3>Customer Requests</h3>
-                <p>3 new requests</p>
-                <button class="cta-button">Handle Requests</button>
-            </div>
-
-            <div class="dashboard-card" style="background: white; padding: 2rem; border-radius: 10px; color: #3b306c;">
-                <h3>Vendor Management</h3>
-                <p>2 vendors awaiting approval</p>
-                <button class="cta-button">Manage Vendors</button>
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeTaskModal()">&times;</span>
+            <h2 id="modalEventTitle"></h2>
+            <div id="modalTasksContainer" class="tasks-grid">
+                <!-- Tasks will be loaded here -->
             </div>
         </div>
     </div>
 
     <script>
-        function toggleMenu() {
-            const navLinks = document.querySelector('.nav-links');
-            const dashboardContainer = document.querySelector('.dashboard-container');
-            
-            navLinks.classList.toggle('show');
-            dashboardContainer.classList.toggle('shift-left');
-            
-            // Stop event propagation
-            event.stopPropagation();
+        async function loadMyEvents() {
+            try {
+                const clientId = localStorage.getItem('clientId');
+                const response = await fetch(`http://localhost:5000/api/bookings/${clientId}`);
+                const events = await response.json();
+                
+                const container = document.getElementById('eventsContainer');
+                
+                if (events.length === 0) {
+                    container.innerHTML = `
+                        <div class="no-events">
+                            <h3>No Events Booked</h3>
+                            <p>Start by creating your first event!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Sort events by date
+                events.sort((a, b) => new Date(a.Date) - new Date(b.Date));
+
+                container.innerHTML = events.map(event => `
+                    <div class="event-card" onclick="showEventTasks(${event.Event_Id}, '${event.Event_Name}')">
+                        <h3>${event.Event_Name}</h3>
+                        <div class="event-details">
+                            <p><i class="fas fa-calendar"></i> ${new Date(event.Date).toLocaleDateString('en-US', {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            })}</p>
+                            <p><i class="fas fa-tag"></i> ${event.Event_Type}</p>
+                            <p><i class="fas fa-map-marker-alt"></i> ${event.Venue_Name}, ${event.City}</p>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading events:', error);
+                container.innerHTML = '<div class="no-events"><p>Error loading events</p></div>';
+            }
         }
 
-        // Close menu when clicking outside
-        document.addEventListener('click', function(event) {
-            const navLinks = document.querySelector('.nav-links');
-            const dashboardContainer = document.querySelector('.dashboard-container');
-            const hamburger = document.querySelector('.hamburger');
-            
-            if (!event.target.closest('.nav-right') && navLinks.classList.contains('show')) {
-                navLinks.classList.remove('show');
-                dashboardContainer.classList.remove('shift-left');
-            }
-        });
-
-        // Add this function to handle dashboard redirection
-        function redirectToDashboard(event) {
-            event.preventDefault();
-            const userRole = localStorage.getItem('userRole');
-            if (userRole === 'client') {
-                window.location.href = 'customer-dashboard.html';
-            } else if (userRole === 'employee') {
-                window.location.href = 'employee-dashboard.html';
-            }
-        }
-
-        // Add at the beginning of your script section
         function updateNavigation() {
             const userRole = localStorage.getItem('userRole');
             const navLinksMain = document.getElementById('navLinksMain');
             
-            if (userRole === 'employee') {
+            if (userRole === 'client') {
                 navLinksMain.innerHTML = `
-                    <li><a href="#" onclick="redirectToDashboard(event)">Dashboard</a></li>
-                    <li><a href="team.html">My Team</a></li>
-                    <li><a href="events.html">Events</a></li>
-                    <li><a href="tasks.html">Tasks</a></li>
-                    <li><a href="registration.html">Registration</a></li>
-                `;
-            } else if (userRole === 'client') {
-                navLinksMain.innerHTML = `
-                    <li><a href="#" onclick="redirectToDashboard(event)">Dashboard</a></li>
+                    <li><a href="#" onclick="redirectToDashboard(event)" class="active">Dashboard</a></li>
                     <li><a href="my_bookings.html">My Bookings</a></li>
                     <li><a href="events.html">Events</a></li>
                     <li><a href="vendors.html">Vendors</a></li>
@@ -113,10 +246,94 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
             updateNavigation();
-            // ... existing code ...
+            loadMyEvents();
         });
+
+        // Navigation functions
+        function toggleMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            const dashboardContainer = document.querySelector('.dashboard-container');
+            navLinks.classList.toggle('show');
+            dashboardContainer.classList.toggle('shift-left');
+            event.stopPropagation();
+        }
+
+        document.addEventListener('click', function(event) {
+            const navLinks = document.querySelector('.nav-links');
+            const dashboardContainer = document.querySelector('.dashboard-container');
+            if (!event.target.closest('.nav-right') && navLinks.classList.contains('show')) {
+                navLinks.classList.remove('show');
+                dashboardContainer.classList.remove('shift-left');
+            }
+        });
+
+        function redirectToDashboard(event) {
+            event.preventDefault();
+            const userRole = localStorage.getItem('userRole');
+            if (userRole === 'client') {
+                window.location.href = 'customer-dashboard.html';
+            } else if (userRole === 'employee') {
+                window.location.href = 'employee-dashboard.html';
+            }
+        }
+
+        async function showEventTasks(eventId, eventName) {
+            try {
+                const response = await fetch(`http://localhost:5000/api/events/${eventId}/tasks`);
+                const tasks = await response.json();
+                
+                const modal = document.getElementById('taskModal');
+                const modalTitle = document.getElementById('modalEventTitle');
+                const tasksContainer = document.getElementById('modalTasksContainer');
+                
+                modalTitle.textContent = `Tasks for ${eventName}`;
+                
+                if (tasks.length === 0) {
+                    tasksContainer.innerHTML = '<p>No tasks assigned for this event yet.</p>';
+                } else {
+                    // Group tasks by team
+                    const tasksByTeam = tasks.reduce((acc, task) => {
+                        if (!acc[task.Team_Name]) {
+                            acc[task.Team_Name] = [];
+                        }
+                        acc[task.Team_Name].push(task);
+                        return acc;
+                    }, {});
+
+                    tasksContainer.innerHTML = Object.entries(tasksByTeam).map(([teamName, teamTasks]) => `
+                        <div class="team-section">
+                            <h3 class="team-title">${teamName}</h3>
+                            ${teamTasks.map(task => `
+                                <div class="task-item">
+                                    <p>${task.Task_Name}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `).join('');
+                }
+                
+                modal.style.display = 'block';
+            } catch (error) {
+                console.error('Error loading tasks:', error);
+                alert('Failed to load tasks for this event');
+            }
+        }
+
+        function closeTaskModal() {
+            const modal = document.getElementById('taskModal');
+            modal.style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('taskModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
     </script>
 </body>
 </html> 

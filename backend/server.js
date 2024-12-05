@@ -158,6 +158,7 @@ async function startServer() {
         app.get('/api/participants/:participantId', participantController.getParticipantById);
         app.get('/api/events/:eventId/payment', eventController.getEventPayment);
         app.get('/api/employee/tasks/:userId', taskController.getEmployeeTeamTasks);
+        app.get('/api/events/:eventId/tasks', taskController.getEventTasks);
 
         app.listen(port, () => {
             console.log(`Server is running on port ${port}`);
