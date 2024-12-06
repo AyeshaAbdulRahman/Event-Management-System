@@ -136,30 +136,30 @@ async function startServer() {
             }
         });
 
-        app.get('https://taqreeb-blue.vercel.app/api/events', eventController.getAllEvents);
-        app.post('https://taqreeb-blue.vercel.app/api/events', eventController.createEvent);
-        app.put('https://taqreeb-blue.vercel.app/api/events/:id/status', eventController.updateEventStatus);
-        app.post('https://taqreeb-blue.vercel.app/api/events/create', eventController.createNewEvent);
-        app.get('https://taqreeb-blue.vercel.app/api/venues', venueController.getAllVenues);
-        app.get('https://taqreeb-blue.vercel.app/api/bookings/:clientId', eventController.getClientBookings);
-        app.get('https://taqreeb-blue.vercel.app/api/profile/:userId', userController.getUserProfile);
-        app.put('https://taqreeb-blue.vercel.app/api/profile/update', userController.updateUserProfile);
-        app.get('https://taqreeb-blue.vercel.app/api/vendors', vendorController.getAllVendors);
-        app.get('https://taqreeb-blue.vercel.app/api/vendors/:vendorId/items', vendorController.getVendorItems);
-        app.post('https://taqreeb-blue.vercel.app/api/supplies/create', suppliesController.createSupplies);
-        app.get('https://taqreeb-blue.vercel.app/api/events/:eventId/supplies', suppliesController.getEventSupplies);
-        app.get('https://taqreeb-blue.vercel.app/api/vendors/:vendorId/supplies', vendorController.getVendorSupplies);
-        app.post('https://taqreeb-blue.vercel.app/api/venues/create', venueController.createVenue);
-        app.get('https://taqreeb-blue.vercel.app/api/employee/team/:userId', employeeController.getTeamMembers);
-        app.post('https://taqreeb-blue.vercel.app/api/participants/create', participantController.createParticipant);
-        app.get('https://taqreeb-blue.vercel.app/api/events/:eventId/participants', participantController.getParticipantsByEvent);
-        app.get('https://taqreeb-blue.vercel.app/api/participants', participantController.getAllParticipants);
-        app.post('https://taqreeb-blue.vercel.app/api/payments/create', participantController.createPayment);
-        app.get('https://taqreeb-blue.vercel.app/api/participants/:participantId', participantController.getParticipantById);
-        app.get('https://taqreeb-blue.vercel.app/api/events/:eventId/payment', eventController.getEventPayment);
-        app.get('https://taqreeb-blue.vercel.app/api/employee/tasks/:userId', taskController.getEmployeeTeamTasks);
-        app.get('https://taqreeb-blue.vercel.app/api/events/:eventId/tasks', taskController.getEventTasks);
-        app.get('https://taqreeb-blue.vercel.app/api/employee/info/:userId', employeeController.getEmployeeInfo);
+        app.get('/api/events', eventController.getAllEvents);
+        app.post('/api/events', eventController.createEvent);
+        app.put('/api/events/:id/status', eventController.updateEventStatus);
+        app.post('/api/events/create', eventController.createNewEvent);
+        app.get('/api/venues', venueController.getAllVenues);
+        app.get('/api/bookings/:clientId', eventController.getClientBookings);
+        app.get('/api/profile/:userId', userController.getUserProfile);
+        app.put('/api/profile/update', userController.updateUserProfile);
+        app.get('/api/vendors', vendorController.getAllVendors);
+        app.get('/api/vendors/:vendorId/items', vendorController.getVendorItems);
+        app.post('/api/supplies/create', suppliesController.createSupplies);
+        app.get('/api/events/:eventId/supplies', suppliesController.getEventSupplies);
+        app.get('/api/vendors/:vendorId/supplies', vendorController.getVendorSupplies);
+        app.post('/api/venues/create', venueController.createVenue);
+        app.get('/api/employee/team/:userId', employeeController.getTeamMembers);
+        app.post('/api/participants/create', participantController.createParticipant);
+        app.get('/api/events/:eventId/participants', participantController.getParticipantsByEvent);
+        app.get('/api/participants', participantController.getAllParticipants);
+        app.post('/api/payments/create', participantController.createPayment);
+        app.get('/api/participants/:participantId', participantController.getParticipantById);
+        app.get('/api/events/:eventId/payment', eventController.getEventPayment);
+        app.get('/api/employee/tasks/:userId', taskController.getEmployeeTeamTasks);
+        app.get('/api/events/:eventId/tasks', taskController.getEventTasks);
+        app.get('/api/employee/info/:userId', employeeController.getEmployeeInfo);
 
         app.options('/api/auth/login', cors(corsOptions)); // Enable pre-flight for this specific route
 
