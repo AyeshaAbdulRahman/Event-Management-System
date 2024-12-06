@@ -58,6 +58,46 @@
             transform: translateY(-5px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            width: 70%;
+            max-width: 600px;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .vendors-list {
+            margin: 20px 0;
+        }
+
+        .vendor-item {
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body style="background-color: #3b306c; color: white;">
@@ -94,7 +134,7 @@
             <span class="close-modal" onclick="closeEventModal()">&times;</span>
             <h2 id="modalEventTitle"></h2>
             <div id="modalTasksContainer" class="tasks-grid">
-                <!-- Tasks will be loaded here -->
+                <!-- Vendors will be loaded here -->
             </div>
         </div>
     </div>
@@ -116,7 +156,7 @@
                 }
 
                 container.innerHTML = events.map(event => `
-                    <div class="event-card" onclick="window.location.href='events.html?id=${event.Event_Id}'" style="cursor: pointer;">
+                    <div class="event-card" onclick="openEventModal(${event.Event_Id}, '${event.Event_Name}')" style="cursor: pointer;">
                         <h3>${event.Event_Name}</h3>
                         <div class="event-details">
                             <p><i class="fas fa-calendar"></i> ${new Date(event.Date).toLocaleDateString()}</p>
@@ -228,6 +268,49 @@
         function handleLogout() {
             localStorage.clear(); // Clear all localStorage data
             window.location.href = 'index.htm';
+        }
+
+        async function openEventModal(eventId, eventName) {
+            currentEventId = eventId;
+            const modal = document.getElementById('eventModal');
+            const modalTitle = document.getElementById('modalEventTitle');
+            modalTitle.textContent = eventName;
+            
+            // Load vendors for this event
+            await loadEventVendors(eventId);
+            
+            modal.style.display = 'block';
+        }
+
+        function closeEventModal() {
+            const modal = document.getElementById('eventModal');
+            modal.style.display = 'none';
+        }
+
+        async function loadEventVendors(eventId) {
+            try {
+                const response = await fetch(`https://taqreeb-blue.vercel.app/api/events/${eventId}/vendors`);
+                const vendors = await response.json();
+                
+                const container = document.getElementById('modalTasksContainer');
+                container.innerHTML = `
+                    <div class="vendors-list">
+                        ${vendors.map(vendor => `
+                            <div class="vendor-item">
+                                <p>${vendor.Vendor_Name}</p>
+                                <p>${vendor.Service_Type}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <button class="add-vendors-btn" onclick="window.location.href='vendor_selector.html?eventId=${eventId}'">
+                        <i class="fas fa-plus"></i>Add Vendors
+                    </button>
+                `;
+            } catch (error) {
+                console.error('Error loading vendors:', error);
+                document.getElementById('modalTasksContainer').innerHTML = 
+                    '<p class="error-message">Error loading vendors</p>';
+            }
         }
     </script>
 </body>
