@@ -20,7 +20,7 @@ async function createSupplies(req, res) {
                 `, [eventId, vendorId, itemName]);
             }
 
-            await connection.commit();
+            await connection.commit();  
             res.status(201).json({ 
                 message: 'Supplies added successfully',
                 eventId,

@@ -10,6 +10,7 @@ const suppliesController = require('./controllers/suppliesController');
 const employeeController = require('./controllers/employeeController');
 const participantController = require('./controllers/participantController');
 const taskController = require('./controllers/taskController');
+const { initializeTriggers } = require('./db/init');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -32,6 +33,7 @@ async function startServer() {
     try {
         const dbPool = await createPool();
         await initializeDatabase();
+        await initializeTriggers();
 
         // Register endpoint
         app.post('/api/auth/register', async (req, res) => {
