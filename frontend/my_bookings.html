@@ -18,9 +18,11 @@
         }
 
         .add-vendors-btn {
-            position: relative;  /* Not fixed or absolute */
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            margin: 0;  /* Remove any existing margins */
             display: block;
-            margin-left: auto;
             width: fit-content;
             background-color: #4CAF50;
             color: white;
@@ -102,6 +104,8 @@
         .event-details-modal {
             color: #3b306c;
             padding: 20px;
+            position: relative;
+            min-height: 200px;  /* Give enough space for the content */
         }
 
         .venue-info, .booked-items {
