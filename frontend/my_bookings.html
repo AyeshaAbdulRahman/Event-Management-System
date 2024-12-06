@@ -98,6 +98,44 @@
             margin-bottom: 10px;
             border-radius: 5px;
         }
+
+        .event-details-modal {
+            color: #3b306c;
+            padding: 20px;
+        }
+
+        .venue-info, .booked-items {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .venue-info h3, .booked-items h3 {
+            color: #3b306c;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .venue-info p, .booked-items p {
+            margin: 10px 0;
+            color: #333;
+        }
+
+        .item {
+            background: white;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .fas {
+            color: #13b874;
+            width: 20px;
+            text-align: center;
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body style="background-color: #3b306c; color: white;">
@@ -279,29 +317,20 @@
             modalTitle.textContent = eventName;
             
             try {
-                // Get event details including venue and supplies
-                const response = await fetch(`https://taqreeb-blue.vercel.app/api/events/${eventId}/supplies`);
-                const eventDetails = await response.json();
+                // Get event details from the same endpoint that gives us the event card data
+                const response = await fetch(`https://taqreeb-blue.vercel.app/api/bookings/${localStorage.getItem('clientId')}`);
+                const events = await response.json();
+                const eventDetails = events.find(e => e.Event_Id === eventId);
                 
                 container.innerHTML = `
                     <div class="event-details-modal">
                         <div class="venue-info">
-                            <h3>Venue Information</h3>
+                            <h3>Event Details</h3>
+                            <p><i class="fas fa-calendar"></i> ${new Date(eventDetails.Date).toLocaleDateString()}</p>
+                            <p><i class="fas fa-tag"></i> ${eventDetails.Event_Type}</p>
                             <p><i class="fas fa-map-marker-alt"></i> ${eventDetails.Venue_Name}, ${eventDetails.City}</p>
-                            <p><i class="fas fa-phone"></i> ${eventDetails.Contact_Number || 'N/A'}</p>
-                        </div>
-                        
-                        <div class="booked-items">
-                            <h3>Booked Items</h3>
-                            ${eventDetails.supplies && eventDetails.supplies.length > 0 ? 
-                                eventDetails.supplies.map(item => `
-                                    <div class="item">
-                                        <p><i class="fas fa-box"></i> ${item.Item_Name}</p>
-                                        <p>Vendor: ${item.Vendor_Name}</p>
-                                    </div>
-                                `).join('') : 
-                                '<p>No items booked yet</p>'
-                            }
+                            <p><i class="fas fa-users"></i> ${eventDetails.Participant_Count} Participants</p>
+                            <p><i class="fas fa-dollar-sign"></i> Total Revenue: $${parseFloat(eventDetails.Total_Payments).toFixed(2)}</p>
                         </div>
 
                         <button class="add-vendors-btn" onclick="window.location.href='vendor_selector.html?eventId=${eventId}'">
