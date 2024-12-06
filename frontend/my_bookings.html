@@ -192,21 +192,17 @@
                 const eventDetails = events.find(e => e.Event_Id === eventId);
                 
                 container.innerHTML = `
-                    <div class="event-details-modal">
-                        <div class="event-details-card">
-                            <div class="event-details-content">
-                                <h3>Event Details</h3>
-                                <p><i class="fas fa-calendar"></i> ${new Date(eventDetails.Date).toLocaleDateString()}</p>
-                                <p><i class="fas fa-tag"></i> ${eventDetails.Event_Type}</p>
-                                <p><i class="fas fa-map-marker-alt"></i> ${eventDetails.Venue_Name}, ${eventDetails.City}</p>
-                                <p><i class="fas fa-users"></i> ${eventDetails.Participant_Count} Participants</p>
-                                <p><i class="fas fa-dollar-sign"></i> Total Revenue: $${parseFloat(eventDetails.Total_Payments).toFixed(2)}</p>
-                            </div>
-                            
-                            <button class="add-vendors-button">
-                                <i class="fas fa-plus"></i>Add Vendors
-                            </button>
-                        </div>
+                    <div class="booking-details-modal">
+                        <h3>Event Details</h3>
+                        <p><i class="fas fa-calendar"></i> ${new Date(eventDetails.Date).toLocaleDateString()}</p>
+                        <p><i class="fas fa-tag"></i> ${eventDetails.Event_Type}</p>
+                        <p><i class="fas fa-map-marker-alt"></i> ${eventDetails.Venue_Name}, ${eventDetails.City}</p>
+                        <p><i class="fas fa-users"></i> ${eventDetails.Participant_Count} Participants</p>
+                        <p><i class="fas fa-dollar-sign"></i> Total Revenue: $${parseFloat(eventDetails.Total_Payments).toFixed(2)}</p>
+                        
+                        <button class="add-vendors-btn" onclick="window.location.href='vendor_selector.html?eventId=${eventId}'">
+                            <i class="fas fa-plus"></i>Add Vendors
+                        </button>
                     </div>
                 `;
             } catch (error) {
