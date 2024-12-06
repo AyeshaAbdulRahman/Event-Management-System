@@ -116,7 +116,7 @@
                 }
 
                 container.innerHTML = events.map(event => `
-                    <div class="event-card">
+                    <div class="event-card" onclick="window.location.href='events.html?id=${event.Event_Id}'" style="cursor: pointer;">
                         <h3>${event.Event_Name}</h3>
                         <div class="event-details">
                             <p><i class="fas fa-calendar"></i> ${new Date(event.Date).toLocaleDateString()}</p>
