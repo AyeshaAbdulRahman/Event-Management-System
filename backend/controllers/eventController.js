@@ -37,7 +37,14 @@ async function getAllEvents(req, res) {
 
 async function createEvent(req, res) {
     try {
-        const eventData = req.body;
+        const { eventName, eventType, eventDate, venueId, clientId } = req.body;
+        const eventData = {
+            Event_Name: eventName,
+            Event_Type: eventType,
+            Date: eventDate,
+            Client_Id: clientId,
+            Venue_Id: venueId
+        };
         const eventId = await Event.createEvent(eventData);
         res.status(201).json({ message: 'Event created successfully', eventId });
     } catch (error) {

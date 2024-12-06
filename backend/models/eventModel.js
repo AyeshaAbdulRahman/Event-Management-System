@@ -60,9 +60,9 @@ async function createEvent(event) {
     const connection = await pool.getConnection();
     try {
         const [result] = await connection.execute(`
-            INSERT INTO Events (Event_Name, Event_Type, Date, Client_Id)
-            VALUES (?, ?, ?, ?)`, 
-            [event.Event_Name, event.Event_Type, event.Date, event.Client_Id]);
+            INSERT INTO Events (Event_Name, Event_Type, Date, Client_Id, Venue_Id)
+            VALUES (?, ?, ?, ?, ?)`, 
+            [event.Event_Name, event.Event_Type, event.Date, event.Client_Id, event.Venue_Id]);
         return result;
     } finally {
         connection.release();
