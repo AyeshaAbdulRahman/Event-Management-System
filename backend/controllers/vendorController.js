@@ -68,8 +68,32 @@ async function getVendorSupplies(req, res) {
     }
 }
 
+async function getEventVendors(req, res) {
+    try {
+        const eventId = req.params.eventId;
+        const connection = await pool.getConnection();
+        try {
+            const [vendors] = await connection.execute(`
+                SELECT DISTINCT v.Vendor_Id, v.Vendor_Name, s.Service_Type
+                FROM vendors v
+                JOIN supplies s ON v.Vendor_Id = s.Vendor_Id
+                WHERE s.Event_Id = ?
+                ORDER BY v.Vendor_Name
+            `, [eventId]);
+            
+            res.json(vendors);
+        } finally {
+            connection.release();
+        }
+    } catch (error) {
+        console.error('Error fetching event vendors:', error);
+        res.status(500).json({ message: 'Error fetching event vendors' });
+    }
+}
+
 module.exports = {
     getAllVendors,
     getVendorItems,
-    getVendorSupplies
+    getVendorSupplies,
+    getEventVendors
 }; 

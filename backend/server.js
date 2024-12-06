@@ -160,6 +160,7 @@ async function startServer() {
         app.get('/api/employee/tasks/:userId', taskController.getEmployeeTeamTasks);
         app.get('/api/events/:eventId/tasks', taskController.getEventTasks);
         app.get('/api/employee/info/:userId', employeeController.getEmployeeInfo);
+        app.get('/api/events/:eventId/vendors', vendorController.getEventVendors);
 
         app.options('/api/auth/login', cors(corsOptions)); // Enable pre-flight for this specific route
 
