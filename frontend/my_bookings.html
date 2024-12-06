@@ -278,12 +278,41 @@
             
             modalTitle.textContent = eventName;
             
-            // Just show the Add Vendor button
-            container.innerHTML = `
-                <button class="add-vendors-btn" onclick="window.location.href='vendor_selector.html?eventId=${eventId}'">
-                    <i class="fas fa-plus"></i>Add Vendors
-                </button>
-            `;
+            try {
+                // Get event details including venue and supplies
+                const response = await fetch(`https://taqreeb-blue.vercel.app/api/events/${eventId}/supplies`);
+                const eventDetails = await response.json();
+                
+                container.innerHTML = `
+                    <div class="event-details-modal">
+                        <div class="venue-info">
+                            <h3>Venue Information</h3>
+                            <p><i class="fas fa-map-marker-alt"></i> ${eventDetails.Venue_Name}, ${eventDetails.City}</p>
+                            <p><i class="fas fa-phone"></i> ${eventDetails.Contact_Number || 'N/A'}</p>
+                        </div>
+                        
+                        <div class="booked-items">
+                            <h3>Booked Items</h3>
+                            ${eventDetails.supplies && eventDetails.supplies.length > 0 ? 
+                                eventDetails.supplies.map(item => `
+                                    <div class="item">
+                                        <p><i class="fas fa-box"></i> ${item.Item_Name}</p>
+                                        <p>Vendor: ${item.Vendor_Name}</p>
+                                    </div>
+                                `).join('') : 
+                                '<p>No items booked yet</p>'
+                            }
+                        </div>
+
+                        <button class="add-vendors-btn" onclick="window.location.href='vendor_selector.html?eventId=${eventId}'">
+                            <i class="fas fa-plus"></i>Add Vendors
+                        </button>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading event details:', error);
+                container.innerHTML = '<p class="error-message">Error loading event details</p>';
+            }
             
             modal.style.display = 'block';
         }
