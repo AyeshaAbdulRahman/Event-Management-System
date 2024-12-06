@@ -2181,3 +2181,11 @@ header {
     gap: 1.5rem;
     margin-bottom: 2rem;
 }
+
+/* Event Details Card Styles (moved from events.css) */
+.event-details-card {
+    position: relative;
+    padding: 20px;
+    margin-bottom: 20px;
+    background: #fff;
+    border-radius: 8px;
