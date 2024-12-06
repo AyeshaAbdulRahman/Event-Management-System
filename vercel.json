@@ -2,17 +2,13 @@
     "version": 2,
     "builds": [
       {
-        "src": "frontend/**/*",
-        "use": "@vercel/static"
-      },
-      {
         "src": "backend/server.js",
         "use": "@vercel/node"
       }
     ],
     "routes": [
       {
-        "src": "/api/(.*)",
+        "src": "/(.*)",
         "dest": "/backend/server.js",
         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         "headers": {
@@ -21,14 +17,6 @@
           "Access-Control-Allow-Headers": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization, Origin",
           "Access-Control-Allow-Credentials": "true"
         }
-      },
-      {
-        "src": "/",
-        "dest": "frontend/index.htm"
-      },
-      {
-        "src": "/(.*)",
-        "dest": "frontend/$1"
       }
     ]
 }

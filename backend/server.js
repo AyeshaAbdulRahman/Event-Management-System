@@ -167,6 +167,10 @@ async function startServer() {
             res.json({ message: 'CORS test successful' });
         });
 
+        app.get('/', (req, res) => {
+            res.json({ message: 'Backend is running' });
+        });
+
         app.listen(port, () => {
             console.log(`Server is running on port ${port}`);
         });
